@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Usage Desk — stay under your AI usage limits</title>
+<meta name="description" content="A private, browser-only desk for tracking weekly AI usage limits, bot routines and short prompts. All data stays in your browser.">
+<style>
+:root{
+  --bg:#000000; --panel:#07090C; --panel2:#0B0F14; --border:#1E293B;
+  --accent:#FF4F00; --text:#E2E8F0; --muted:#94A3B8; --faint:#64748B;
+  --green:#22C55E; --amber:#F59E0B; --red:#EF4444;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:15px;line-height:1.5;padding:16px 14px 40px;max-width:880px;margin:0 auto}
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+a{color:var(--accent)}
+h1{font-size:24px;letter-spacing:.5px;color:var(--text)}
+h1 .dot{color:var(--accent)}
+h2{font-size:17px;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+h3{font-size:15px}
+section{border:1px solid var(--border);background:var(--panel);padding:16px 14px;margin-top:18px;border-radius:4px}
+.sec-note{color:var(--muted);font-size:13px;margin-bottom:12px}
+.muted{color:var(--muted)} .small{font-size:13px} .tiny{font-size:12px}
+header.top{border-bottom:2px solid var(--accent);padding-bottom:12px}
+.privacy{color:var(--muted);font-size:13px;margin-top:6px}
+.privacy strong{color:var(--text)}
+nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+nav.toc a{border:1px solid var(--border);padding:4px 10px;border-radius:3px;text-decoration:none;font-size:13px;background:var(--panel2)}
+nav.toc a:hover{border-color:var(--accent)}
+.banner{border:1px solid var(--amber);color:var(--amber);background:#141003;padding:10px 12px;margin-top:14px;border-radius:4px;font-size:13px;display:none}
+.banner.show{display:block}
+.banner button{margin-left:8px}
+button{font-family:var(--mono);background:var(--panel2);color:var(--text);border:1px solid var(--border);padding:7px 12px;border-radius:3px;cursor:pointer;font-size:14px}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700}
+button.primary:hover{background:#ff6a26}
+button.danger:hover{border-color:var(--red);color:var(--red)}
+button:disabled{opacity:.45;cursor:not-allowed}
+input,select,textarea{font-family:var(--mono);background:#000;color:var(--text);border:1px solid var(--border);padding:7px 9px;border-radius:3px;font-size:14px;width:100%}
+textarea{min-height:84px;resize:vertical}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+label:first-child{margin-top:0}
+.grid{display:grid;grid-template-columns:1fr;gap:0 14px}
+@media (min-width:640px){.grid{grid-template-columns:1fr 1fr}.grid .wide{grid-column:1/-1}}
+form{border:1px dashed var(--border);padding:12px;border-radius:4px;margin-bottom:14px;background:var(--panel2)}
+form h3{color:var(--muted);text-transform:uppercase;font-size:12px;letter-spacing:1px;margin-bottom:6px}
+.form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+/* provider cards */
+.cards{display:grid;grid-template-columns:1fr;gap:12px}
+@media (min-width:640px){.cards{grid-template-columns:1fr 1fr}}
+.pcard{border:1px solid var(--border);border-radius:4px;padding:12px;background:var(--panel2)}
+.pcard h3{font-size:16px;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.pcard h3 a{font-size:12px;text-decoration:none}
+.bar{height:12px;border:1px solid var(--border);background:#000;border-radius:2px;margin:10px 0 6px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--green)}
+.bar>i.amber{background:var(--amber)} .bar>i.red{background:var(--red)}
+.st-green{color:var(--green)} .st-amber{color:var(--amber)} .st-red{color:var(--red)}
+.big{font-size:20px}
+.quickrow{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.quickrow input{flex:1 1 110px;min-width:0}
+.quickrow button{white-space:nowrap}
+.forecast{font-size:13px;margin-top:8px;color:var(--muted)}
+.forecast strong{color:var(--text)}
+/* lists */
+.item{border:1px solid var(--border);border-radius:4px;padding:12px;margin-bottom:10px;background:var(--panel2)}
+.item .head{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.item .actions{display:flex;gap:6px;flex-wrap:wrap}
+.item .actions button{padding:4px 9px;font-size:13px}
+.tag{display:inline-block;border:1px solid var(--border);border-radius:2px;padding:0 6px;font-size:12px;color:var(--muted);margin-right:5px}
+.tag.ex{border-color:var(--accent);color:var(--accent)}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}
+th,td{border:1px solid var(--border);padding:5px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:400;text-transform:uppercase;font-size:11px;letter-spacing:1px}
+.checkline{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed var(--border)}
+.checkline input{width:auto;margin-top:4px}
+.checkline.done span{color:var(--faint);text-decoration:line-through}
+.hints{margin-top:8px;font-size:13px}
+.hints li{margin-left:18px;color:var(--amber)}
+.hints li.ok{color:var(--green)}
+.vars{display:grid;grid-template-columns:1fr;gap:0 12px;margin-top:8px}
+@media (min-width:640px){.vars{grid-template-columns:1fr 1fr}}
+.routine-row{display:grid;grid-template-columns:1fr;gap:6px;border:1px solid var(--border);padding:8px;border-radius:3px;margin-bottom:8px}
+@media (min-width:640px){.routine-row{grid-template-columns:1.2fr 1fr .6fr auto;align-items:end}.routine-row label{margin-top:0}}
+.routine-row button{align-self:end}
+.deleted{opacity:.5}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#000;border:1px solid var(--accent);color:var(--text);padding:10px 16px;border-radius:4px;font-size:14px;display:none;z-index:50;max-width:92vw;text-align:center}
+.toast.show{display:block}
+.kbd-hint{color:var(--faint);font-size:12px}
+footer{margin-top:26px;border-top:1px solid var(--border);padding-top:14px;color:var(--muted);font-size:13px}
+.review-out{white-space:pre-wrap;word-break:break-word;font-size:13px}
+.switch{display:flex;gap:10px;align-items:flex-start}
+.switch input{width:auto;margin-top:4px}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *{transition:none !important;animation:none !important}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>USAGE<span class="dot">_</span>DESK</h1>
+  <p class="privacy"><strong>Private by design:</strong> this page makes no network calls and sends nothing anywhere. All data lives in this browser's localStorage. None of these services offers a usage API, so usage is typed in by hand — and no plan limits are baked in: you set your own.</p>
+  <nav class="toc" aria-label="Sections">
+    <a href="#quicklog">Quick log</a>
+    <a href="#providers">Providers</a>
+    <a href="#bots">Bots &amp; routines</a>
+    <a href="#prompts">Prompt library</a>
+    <a href="#review">Weekly review</a>
+    <a href="#data">Data &amp; reminders</a>
+  </nav>
+</header>
+
+<div class="banner" id="sampleBanner" role="note">
+  <span><strong>Sample data</strong> is loaded so every module works on first view. The limits, logs, bots and prompts below are examples — replace them with your own.</span>
+  <button type="button" id="clearSampleBtn">Clear sample data</button>
+</div>
+
+<main>
+<section id="quicklog" aria-labelledby="quicklog-h">
+  <h2 id="quicklog-h">Quick log</h2>
+  <p class="sec-note">Read the number off the provider's usage page and type it here. Status: <span class="st-green">green under 50%</span>, <span class="st-amber">amber 50–89%</span>, <span class="st-red">red at 90%+</span>. Countdowns refresh on their own.</p>
+  <div class="cards" id="providerCards"></div>
+  <p class="muted small" id="noProviders" hidden>No providers yet. Add one under <a href="#providers">Providers</a>.</p>
+</section>
+
+<section id="providers" aria-labelledby="providers-h">
+  <h2 id="providers-h">Providers</h2>
+  <p class="sec-note">Your services and the limits <em>you</em> set. Nothing here is a real plan limit until you type it in.</p>
+  <form id="providerForm">
+    <h3 id="providerFormTitle">Add a provider</h3>
+    <input type="hidden" id="pf-id">
+    <div class="grid">
+      <div><label for="pf-name">Name</label><input id="pf-name" required autocomplete="off" placeholder="e.g. Grok Bot"></div>
+      <div><label for="pf-url">Usage page link (paste it in)</label><input id="pf-url" type="url" autocomplete="off" placeholder="https://…"></div>
+      <div><label for="pf-measure">Measured as</label>
+        <select id="pf-measure">
+          <option value="percent">Percent of weekly limit</option>
+          <option value="count">Messages per window</option>
+          <option value="custom">Custom unit</option>
+        </select></div>
+      <div><label for="pf-unit">Custom unit label (if custom)</label><input id="pf-unit" autocomplete="off" placeholder="e.g. credits"></div>
+      <div><label for="pf-limit">Your limit (in the unit above; 100 for percent)</label><input id="pf-limit" type="number" min="0" step="any" required></div>
+      <div><label for="pf-tz">Timezone</label><input id="pf-tz" autocomplete="off" value="America/Chicago"></div>
+      <div><label for="pf-reset">Reset rule</label>
+        <select id="pf-reset">
+          <option value="weekly">Weekly, on a chosen day &amp; time</option>
+          <option value="rolling">Rolling window of N hours</option>
+          <option value="monthly">Monthly, on a chosen day</option>
+        </select></div>
+      <div data-reset="weekly"><label for="pf-weekday">Reset weekday</label>
+        <select id="pf-weekday">
+          <option value="0">Sunday</option><option value="1">Monday</option><option value="2">Tuesday</option>
+          <option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday</option>
+        </select></div>
+      <div data-reset="weekly monthly"><label for="pf-time">Reset time</label><input id="pf-time" type="time" value="09:00"></div>
+      <div data-reset="rolling"><label for="pf-hours">Rolling window hours</label><input id="pf-hours" type="number" min="1" step="1" value="168"></div>
+      <div data-reset="monthly"><label for="pf-day">Reset day of month</label><input id="pf-day" type="number" min="1" max="31" step="1" value="1"></div>
+      <div><label for="pf-warn1">Warning threshold 1 (%)</label><input id="pf-warn1" type="number" min="0" max="100" step="any" value="50"></div>
+      <div><label for="pf-warn2">Warning threshold 2 (%)</label><input id="pf-warn2" type="number" min="0" max="100" step="any" value="75"></div>
+      <div><label for="pf-warn3">Warning threshold 3 (%)</label><input id="pf-warn3" type="number" min="0" max="100" step="any" value="90"></div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="primary" id="pf-submit">Add provider</button>
+      <button type="button" id="pf-cancel" hidden>Cancel edit</button>
+      <button type="button" id="pf-preset-grok">Preset: Grok Bot</button>
+      <button type="button" id="pf-preset-muse">Preset: Muse</button>
+      <button type="button" id="pf-preset-claude">Preset: Claude Pro</button>
+    </div>
+  </form>
+  <div id="providerList"></div>
+</section>
+
+<section id="bots" aria-labelledby="bots-h">
+  <h2 id="bots-h">Bots &amp; routines</h2>
+  <p class="sec-note">Where the usage goes. Estimated runs/week are worked out from each routine's schedule; busiest bots sort to the top. Schedules understand "every 6h", "3x/day", "daily", "weekdays", "weekly" — or type a manual runs/week.</p>
+  <form id="botForm">
+    <h3 id="botFormTitle">Add a bot</h3>
+    <input type="hidden" id="bf-id">
+    <div class="grid">
+      <div><label for="bf-name">Bot name</label><input id="bf-name" required autocomplete="off" placeholder="e.g. Research Wire"></div>
+      <div><label for="bf-status">Status</label>
+        <select id="bf-status"><option value="active">Active</option><option value="paused">Paused</option><option value="deleted">Deleted</option></select></div>
+      <div class="wide"><label for="bf-purpose">Purpose</label><input id="bf-purpose" autocomplete="off"></div>
+      <div class="wide"><label for="bf-notes">Notes</label><input id="bf-notes" autocomplete="off"></div>
+    </div>
+    <label>Routines</label>
+    <div id="bf-routines"></div>
+    <button type="button" id="bf-add-routine">+ Add routine</button>
+    <div class="form-actions">
+      <button type="submit" class="primary" id="bf-submit">Add bot</button>
+      <button type="button" id="bf-cancel" hidden>Cancel edit</button>
+    </div>
+  </form>
+  <div id="botList"></div>
+  <h3 style="margin-top:16px">Pause plan</h3>
+  <p class="sec-note">When usage gets tight: work down this list, pause each active bot's routines, tick it off.</p>
+  <div id="pausePlan"></div>
+</section>
+
+<section id="prompts" aria-labelledby="prompts-h">
+  <h2 id="prompts-h">Prompt library</h2>
+  <p class="sec-note">Short prompts that finish in one shot burn less than open-ended ones. Use <span class="tag">{{var}}</span> placeholders — a fill-in form appears under each prompt. Token counts are characters ÷ 4, labelled approx.</p>
+  <label for="lintThreshold" style="max-width:320px">Efficiency linter: flag prompts over this many approx tokens</label>
+  <input id="lintThreshold" type="number" min="1" step="1" value="250" style="max-width:320px">
+  <form id="promptForm" style="margin-top:14px">
+    <h3 id="promptFormTitle">Add a prompt</h3>
+    <input type="hidden" id="prf-id">
+    <div class="grid">
+      <div><label for="prf-title">Title</label><input id="prf-title" required autocomplete="off"></div>
+      <div><label for="prf-tags">Provider tags (comma separated)</label><input id="prf-tags" autocomplete="off" placeholder="Grok Bot, Claude"></div>
+      <div class="wide"><label for="prf-body">Prompt body (use {{var}} for fill-ins)</label><textarea id="prf-body" required></textarea></div>
+      <div class="wide"><label for="prf-notes">Notes</label><input id="prf-notes" autocomplete="off"></div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="primary" id="prf-submit">Add prompt</button>
+      <button type="button" id="prf-cancel" hidden>Cancel edit</button>
+    </div>
+  </form>
+  <div id="promptList"></div>
+</section>
+
+<section id="review" aria-labelledby="review-h">
+  <h2 id="review-h">Weekly review</h2>
+  <p class="sec-note">Past weeks at a glance: peak usage per provider, the day a limit was hit, and your most-used prompts.</p>
+  <div id="reviewOut" class="review-out"></div>
+  <div class="form-actions"><button type="button" id="copyReviewBtn">Copy as Markdown</button></div>
+</section>
+
+<section id="data" aria-labelledby="data-h">
+  <h2 id="data-h">Data &amp; reminders</h2>
+  <p class="sec-note">Everything lives in this browser. Export a JSON backup, import it on another machine, or clear it all.</p>
+  <div class="form-actions">
+    <button type="button" id="exportBtn">Export JSON</button>
+    <label for="importFile" style="margin:0;display:inline-block"><span class="kbd-hint">Import JSON:</span></label>
+    <input type="file" id="importFile" accept="application/json,.json" style="width:auto;border:none;padding:0">
+    <button type="button" id="clearAllBtn" class="danger">Clear all data</button>
+  </div>
+  <p class="small muted" id="importMsg" role="status"></p>
+  <h3 style="margin-top:18px">Reminders</h3>
+  <div class="switch">
+    <input type="checkbox" id="reminderToggle">
+    <label for="reminderToggle" style="margin:0">Notify me when a warning threshold is crossed or a reset is within 1 hour. <strong>Reminders only fire while this tab is open — no push server.</strong> The browser will ask permission.</label>
+  </div>
+</section>
+</main>
+
+<footer>
+  <p>Usage Desk — hand-entered, browser-only, no trackers. Something off? <a href="https://iggy-contact.iggy-mw.workers.dev?site=usage-desk">Contact</a>.</p>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module">
+/* =====================================================================
+   Usage Desk — all state in localStorage, no network calls.
+   The PURE block below contains every testable function (forecast math,
+   schedule parser, schema validation, export/import round trip,
+   escaping, token estimate, linter, timezone window math). It uses no
+   browser APIs so the identical code runs under Node for unit tests.
+   ===================================================================== */
+/*PURE-START*/
+const DAY_MS = 86400000, HOUR_MS = 3600000;
+const DATA_VERSION = 1;
+const DEFAULT_TZ = 'America/Chicago';
+
+function escapeHtml(s){
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function approxTokens(text){ return Math.ceil(String(text ?? '').length / 4); }
+function extractVars(body){
+  const out = []; const re = /\{\{\s*([^{}]+?)\s*\}\}/g; let m;
+  while ((m = re.exec(String(body ?? '')))) { const v = m[1].trim(); if (v && !out.includes(v)) out.push(v); }
+  return out;
+}
+function fillTemplate(body, values){
+  return String(body ?? '').replace(/\{\{\s*([^{}]+?)\s*\}\}/g, (whole, name) => {
+    const v = values ? values[name.trim()] : undefined;
+    return (v === undefined || v === '') ? whole : String(v);
+  });
+}
+/* Least-squares straight-line fit over points [{t, v}]; returns the time
+   (ms) at which the fitted line reaches target, or null when there are
+   fewer than 2 points or the burn rate is not rising. */
+function linearForecast(points, target){
+  if (!Array.isArray(points) || points.length < 2) return null;
+  const pts = points.slice().sort((a,b) => a.t - b.t);
+  const t0 = pts[0].t, n = pts.length;
+  let sx = 0, sy = 0, sxx = 0, sxy = 0;
+  for (const p of pts){ const x = p.t - t0, y = p.v; sx += x; sy += y; sxx += x*x; sxy += x*y; }
+  const denom = n*sxx - sx*sx;
+  if (denom === 0) return null;
+  const slope = (n*sxy - sx*sy) / denom;         // units per ms
+  if (!(slope > 0)) return null;
+  const intercept = (sy - slope*sx) / n;
+  return t0 + (target - intercept) / slope;
+}
+/* Parse a routine schedule into runs per week, or null when unparseable. */
+function parseSchedule(text){
+  if (text === null || text === undefined) return null;
+  const s = String(text).toLowerCase().trim();
+  if (!s) return null;
+  let m;
+  if (/\bweekdays?\b/.test(s)) return 5;
+  if (/\bweekly\b/.test(s) || /once a week/.test(s)) return 1;
+  if (/twice a week/.test(s)) return 2;
+  if (/twice a day/.test(s)) return 14;
+  if (/\bdaily\b/.test(s) || /once a day/.test(s) || /every day/.test(s)) return 7;
+  if ((m = s.match(/(\d+(?:\.\d+)?)\s*x\s*(?:\/|per\s+)?(day|week)/))) { const n = parseFloat(m[1]); return m[2] === 'day' ? n*7 : n; }
+  if ((m = s.match(/every\s+(\d+(?:\.\d+)?)\s*(h|hr|hrs|hour|hours)\b/))) { const n = parseFloat(m[1]); return n > 0 ? 168/n : null; }
+  if (/every\s+(an\s+)?hour/.test(s) || /\bhourly\b/.test(s)) return 168;
+  if ((m = s.match(/every\s+(\d+(?:\.\d+)?)\s*(m|min|mins|minute|minutes)\b/))) { const n = parseFloat(m[1]); return n > 0 ? (168*60)/n : null; }
+  if ((m = s.match(/every\s+(\d+(?:\.\d+)?)\s*(d|day|days)\b/))) { const n = parseFloat(m[1]); return n > 0 ? 7/n : null; }
+  if ((m = s.match(/every\s+(\d+(?:\.\d+)?)\s*(w|week|weeks)\b/))) { const n = parseFloat(m[1]); return n > 0 ? 1/n : null; }
+  return null;
+}
+function routineRunsPerWeek(routine){
+  if (routine && routine.runsPerWeekOverride !== null && routine.runsPerWeekOverride !== undefined && routine.runsPerWeekOverride !== '') {
+    const n = Number(routine.runsPerWeekOverride); if (Number.isFinite(n)) return n;
+  }
+  return parseSchedule(routine ? routine.schedule : '');
+}
+function botRunsPerWeek(bot){
+  if (!bot || !Array.isArray(bot.routines)) return 0;
+  let total = 0, unknown = false;
+  for (const r of bot.routines){ const n = routineRunsPerWeek(r); if (n === null) unknown = true; else total += n; }
+  return { total, unknown };
+}
+function statusForPct(pct){ return pct >= 90 ? 'red' : (pct >= 50 ? 'amber' : 'green'); }
+function statusLabel(pct){ return pct >= 90 ? 'red zone' : (pct >= 50 ? 'watch it' : 'comfortable'); }
+
+/* ---- timezone helpers (Intl only) ---- */
+function tzOffsetMs(date, tz){
+  const dtf = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour12: false, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  const parts = {};
+  for (const p of dtf.formatToParts(date)) parts[p.type] = p.value;
+  const asUTC = Date.UTC(+parts.year, +parts.month - 1, +parts.day, (+parts.hour) % 24, +parts.minute, +parts.second);
+  return asUTC - Math.floor(date.getTime()/1000)*1000;
+}
+function zonedParts(ms, tz){
+  const dtf = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour12: false, year:'numeric', month:'numeric', day:'numeric', hour:'numeric', minute:'numeric' });
+  const parts = {};
+  for (const p of dtf.formatToParts(new Date(ms))) parts[p.type] = p.value;
+  const y = +parts.year, mo = +parts.month, d = +parts.day;
+  return { y, mo, d, h: (+parts.hour) % 24, mi: +parts.minute, dow: new Date(Date.UTC(y, mo-1, d)).getUTCDay() };
+}
+function zonedTimeToUtcMs(y, mo, d, h, mi, tz){
+  const target = Date.UTC(y, mo-1, d, h, mi, 0);
+  let guess = target;
+  for (let i = 0; i < 3; i++){ const next = target - tzOffsetMs(new Date(guess), tz); if (next === guess) break; guess = next; }
+  return guess;
+}
+function shiftDate(y, mo, d, days){
+  const dt = new Date(Date.UTC(y, mo-1, d + days));
+  return { y: dt.getUTCFullYear(), mo: dt.getUTCMonth()+1, d: dt.getUTCDate() };
+}
+function parseTimeHHMM(t){
+  const m = /^(\d{1,2}):(\d{2})$/.exec(String(t ?? ''));
+  if (!m) return { h: 9, mi: 0 };
+  return { h: Math.min(23, +m[1]), mi: Math.min(59, +m[2]) };
+}
+/* Current window [start, end) for a provider's reset rule at nowMs. */
+function windowBounds(provider, nowMs){
+  const r = provider.reset || { type: 'weekly', weekday: 1, time: '09:00', hours: 168, day: 1 };
+  const tz = provider.tz || DEFAULT_TZ;
+  if (r.type === 'rolling'){
+    const span = Math.max(1, Number(r.hours) || 168) * HOUR_MS;
+    const start = Math.floor(nowMs / span) * span;
+    return { start, end: start + span };
+  }
+  if (r.type === 'monthly'){
+    const zp = zonedParts(nowMs, tz);
+    const { h, mi } = parseTimeHHMM(r.time);
+    const dayWanted = Math.min(31, Math.max(1, Number(r.day) || 1));
+    const daysIn = (yy, mm) => new Date(Date.UTC(yy, mm, 0)).getUTCDate();
+    let y = zp.y, mo = zp.mo;
+    let start = zonedTimeToUtcMs(y, mo, Math.min(dayWanted, daysIn(y, mo)), h, mi, tz);
+    if (start > nowMs){ mo -= 1; if (mo < 1){ mo = 12; y -= 1; } start = zonedTimeToUtcMs(y, mo, Math.min(dayWanted, daysIn(y, mo)), h, mi, tz); }
+    let ny = y, nmo = mo + 1; if (nmo > 12){ nmo = 1; ny += 1; }
+    const end = zonedTimeToUtcMs(ny, nmo, Math.min(dayWanted, daysIn(ny, nmo)), h, mi, tz);
+    return { start, end };
+  }
+  /* weekly */
+  const zp = zonedParts(nowMs, tz);
+  const { h, mi } = parseTimeHHMM(r.time);
+  const weekday = Math.min(6, Math.max(0, Number(r.weekday) || 0));
+  let delta = (zp.dow - weekday + 7) % 7;
+  let cd = shiftDate(zp.y, zp.mo, zp.d, -delta);
+  let start = zonedTimeToUtcMs(cd.y, cd.mo, cd.d, h, mi, tz);
+  if (start > nowMs){ cd = shiftDate(cd.y, cd.mo, cd.d, -7); start = zonedTimeToUtcMs(cd.y, cd.mo, cd.d, h, mi, tz); }
+  const ed = shiftDate(cd.y, cd.mo, cd.d, 7);
+  const end = zonedTimeToUtcMs(ed.y, ed.mo, ed.d, h, mi, tz);
+  return { start, end };
+}
+function weekStartMs(ms, tz){
+  const zp = zonedParts(ms, tz);
+  const sinceMonday = (zp.dow + 6) % 7;
+  const md = shiftDate(zp.y, zp.mo, zp.d, -sinceMonday);
+  return zonedTimeToUtcMs(md.y, md.mo, md.d, 0, 0, tz);
+}
+
+/* ---- formatting ---- */
+function fmtCountdown(ms){
+  if (!Number.isFinite(ms) || ms < 0) ms = 0;
+  const d = Math.floor(ms / DAY_MS), h = Math.floor((ms % DAY_MS) / HOUR_MS), m = Math.floor((ms % HOUR_MS) / 60000);
+  if (d > 0) return d + 'd ' + h + 'h';
+  if (h > 0) return h + 'h ' + m + 'm';
+  return m + 'm';
+}
+function fmtWhen(ms, tz){
+  try { return new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', timeZoneName: 'short' }).format(new Date(ms)); }
+  catch { return new Date(ms).toISOString(); }
+}
+function fmtDay(ms, tz){
+  try { return new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', month: 'short', day: 'numeric' }).format(new Date(ms)); }
+  catch { return new Date(ms).toISOString().slice(0, 10); }
+}
+function fmtRuns(n){ if (n === null || n === undefined) return '?'; const r = Math.round(n * 10) / 10; return Number.isInteger(r) ? String(r) : r.toFixed(1); }
+
+/* ---- efficiency linter ---- */
+const LINT_OPEN_PHRASES = ['keep an eye on', 'whenever', 'monitor', 'etc.', 'and so on', 'ongoing', 'keep checking', 'check in periodically'];
+const LINT_LONG_PHRASES = ['detailed report', 'full report', 'comprehensive report', 'exhaustive', 'in-depth report'];
+function lintPrompt(body, thresholdTokens){
+  const hints = [];
+  const text = String(body ?? '');
+  const toks = approxTokens(text);
+  const limit = Number(thresholdTokens) > 0 ? Number(thresholdTokens) : 250;
+  if (toks > limit) hints.push('Long prompt: ~' + toks + ' approx tokens (your limit is ' + limit + '). Trim setup; link the spec instead of pasting it.');
+  const lower = text.toLowerCase();
+  for (const ph of LINT_OPEN_PHRASES) if (lower.includes(ph)) hints.push('Open-ended phrase "' + ph + '" — give it a fixed number of checks or a stop time.');
+  for (const ph of LINT_LONG_PHRASES) if (lower.includes(ph)) hints.push('Asks for a long output ("' + ph + '") — cap it instead: "one line" or "max 150 words".');
+  if (!/(stop|limit|no more than|at most|definition of done|done when|one line|one sentence|max(imum)?\s+\d|until\b[^.]*\bdone\b)/i.test(text))
+    hints.push('No stop condition — add one, e.g. "stop after X" or a definition of done.');
+  return hints;
+}
+
+/* ---- schema: validation + normalization (keeps stored shape stable so
+        an export → import round trip reproduces identical data) ---- */
+function isObj(x){ return x !== null && typeof x === 'object' && !Array.isArray(x); }
+function numOr(x, dflt){ const n = Number(x); return Number.isFinite(n) ? n : dflt; }
+function strOr(x){ return x === null || x === undefined ? '' : String(x); }
+function validTz(tz){
+  try { new Intl.DateTimeFormat('en-US', { timeZone: tz }); return tz; } catch { return DEFAULT_TZ; }
+}
+function normalizeProvider(p, i){
+  if (!isObj(p)) throw new Error('providers[' + i + '] is not an object');
+  const r = isObj(p.reset) ? p.reset : {};
+  const rt = ['weekly','rolling','monthly'].includes(r.type) ? r.type : 'weekly';
+  const w = Array.isArray(p.warn) ? p.warn : [];
+  return {
+    id: strOr(p.id) || ('p' + (i+1)),
+    name: strOr(p.name) || 'Provider',
+    usageUrl: strOr(p.usageUrl),
+    measure: ['percent','count','custom'].includes(p.measure) ? p.measure : 'percent',
+    unitLabel: strOr(p.unitLabel),
+    limit: numOr(p.limit, 100),
+    reset: {
+      type: rt,
+      weekday: Math.min(6, Math.max(0, Math.floor(numOr(r.weekday, 1)))),
+      time: /^([01]?\d|2[0-3]):[0-5]\d$/.test(strOr(r.time)) ? strOr(r.time) : '09:00',
+      hours: Math.max(1, numOr(r.hours, 168)),
+      day: Math.min(31, Math.max(1, Math.floor(numOr(r.day, 1))))
+    },
+    warn: [numOr(w[0], 50), numOr(w[1], 75), numOr(w[2], 90)],
+    tz: validTz(strOr(p.tz) || DEFAULT_TZ)
+  };
+}
+function normalizeLog(l, i){
+  if (!isObj(l)) throw new Error('logs[' + i + '] is not an object');
+  return { id: strOr(l.id) || ('l' + (i+1)), providerId: strOr(l.providerId), ts: numOr(l.ts, 0), value: numOr(l.value, 0), kind: l.kind === 'inc' ? 'inc' : 'set' };
+}
+function normalizeBot(b, i){
+  if (!isObj(b)) throw new Error('bots[' + i + '] is not an object');
+  const routines = Array.isArray(b.routines) ? b.routines : [];
+  return {
+    id: strOr(b.id) || ('b' + (i+1)),
+    name: strOr(b.name) || 'Bot',
+    purpose: strOr(b.purpose),
+    status: ['active','paused','deleted'].includes(b.status) ? b.status : 'active',
+    notes: strOr(b.notes),
+    pauseChecked: !!b.pauseChecked,
+    routines: routines.map((r, j) => {
+      if (!isObj(r)) throw new Error('bots[' + i + '].routines[' + j + '] is not an object');
+      const ov = (r.runsPerWeekOverride === null || r.runsPerWeekOverride === undefined || r.runsPerWeekOverride === '') ? null : numOr(r.runsPerWeekOverride, null);
+      return { id: strOr(r.id) || ('r' + (i+1) + '-' + (j+1)), name: strOr(r.name), schedule: strOr(r.schedule), runsPerWeekOverride: ov };
+    })
+  };
+}
+function normalizePrompt(p, i){
+  if (!isObj(p)) throw new Error('prompts[' + i + '] is not an object');
+  let tags = p.tags;
+  if (typeof tags === 'string') tags = tags.split(',');
+  if (!Array.isArray(tags)) tags = [];
+  return {
+    id: strOr(p.id) || ('pr' + (i+1)),
+    title: strOr(p.title) || 'Untitled',
+    tags: tags.map(t => strOr(t).trim()).filter(Boolean),
+    body: strOr(p.body),
+    notes: strOr(p.notes),
+    usedCount: Math.max(0, Math.floor(numOr(p.usedCount, 0))),
+    example: !!p.example
+  };
+}
+function normalizeData(raw){
+  if (!isObj(raw)) throw new Error('Top level must be a JSON object');
+  if (raw.version !== DATA_VERSION) throw new Error('Unsupported version: ' + strOr(raw.version) + ' (expected ' + DATA_VERSION + ')');
+  for (const k of ['providers','logs','bots','prompts']) if (!Array.isArray(raw[k])) throw new Error('Missing or invalid array: ' + k);
+  return {
+    version: DATA_VERSION,
+    providers: raw.providers.map(normalizeProvider),
+    logs: raw.logs.map(normalizeLog),
+    bots: raw.bots.map(normalizeBot),
+    prompts: raw.prompts.map(normalizePrompt)
+  };
+}
+function validateData(raw){
+  try { normalizeData(raw); return { ok: true, errors: [] }; }
+  catch (e) { return { ok: false, errors: [e.message] }; }
+}
+function serializeData(data){ return JSON.stringify(normalizeData(data), null, 2); }
+function parseImport(text){
+  let raw;
+  try { raw = JSON.parse(text); } catch { throw new Error('That file is not valid JSON.'); }
+  return normalizeData(raw);
+}
+
+/* ---- usage state derived from logs ---- */
+function currentUsage(provider, logs, nowMs){
+  const b = windowBounds(provider, nowMs);
+  const entries = logs.filter(l => l.providerId === provider.id && l.ts >= b.start && l.ts < b.end).sort((a, c) => a.ts - c.ts);
+  const value = entries.length ? entries[entries.length - 1].value : 0;
+  const limit = Number(provider.limit) || 0;
+  const pct = limit > 0 ? (value / limit) * 100 : 0;
+  return { bounds: b, entries, value, pct };
+}
+function unitName(provider){
+  if (provider.measure === 'percent') return '%';
+  if (provider.measure === 'count') return 'messages';
+  return provider.unitLabel || 'units';
+}
+
+/* ---- weekly review (pure) ---- */
+function buildReview(data, nowMs){
+  const byWeek = new Map();
+  for (const p of data.providers){
+    const tz = p.tz || DEFAULT_TZ;
+    const limit = Number(p.limit) || 0;
+    for (const l of data.logs){
+      if (l.providerId !== p.id) continue;
+      const wk = weekStartMs(l.ts, tz);
+      const key = wk + '|' + p.id;
+      if (!byWeek.has(key)) byWeek.set(key, { weekStart: wk, tz, provider: p, peak: -Infinity, hitTs: null });
+      const rec = byWeek.get(key);
+      if (l.value > rec.peak) rec.peak = l.value;
+      if (limit > 0 && l.value >= limit && (rec.hitTs === null || l.ts < rec.hitTs)) rec.hitTs = l.ts;
+    }
+  }
+  const weeksMap = new Map();
+  for (const rec of byWeek.values()){
+    if (!weeksMap.has(rec.weekStart)) weeksMap.set(rec.weekStart, { weekStart: rec.weekStart, rows: [] });
+    weeksMap.get(rec.weekStart).rows.push({
+      providerName: rec.provider.name, peak: rec.peak, limit: Number(rec.provider.limit) || 0,
+      pct: (Number(rec.provider.limit) || 0) > 0 ? (rec.peak / rec.provider.limit) * 100 : 0,
+      hitDay: rec.hitTs === null ? null : fmtDay(rec.hitTs, rec.tz)
+    });
+  }
+  const weeks = [...weeksMap.values()].sort((a, b) => b.weekStart - a.weekStart)
+    .map(w => ({ label: fmtDay(w.weekStart, DEFAULT_TZ), rows: w.rows.sort((a, b) => a.providerName.localeCompare(b.providerName)) }));
+  const topPrompts = data.prompts.filter(p => p.usedCount > 0).sort((a, b) => b.usedCount - a.usedCount).slice(0, 5)
+    .map(p => ({ title: p.title, usedCount: p.usedCount }));
+  return { weeks, topPrompts };
+}
+function reviewMarkdown(data, nowMs){
+  const r = buildReview(data, nowMs);
+  const lines = ['# Usage Desk — weekly review', ''];
+  if (!r.weeks.length) lines.push('No usage logged yet.', '');
+  for (const w of r.weeks){
+    lines.push('## Week of ' + w.label, '');
+    for (const row of w.rows){
+      lines.push('- **' + row.providerName + '**: peak ' + fmtRuns(row.peak) + ' of ' + fmtRuns(row.limit) + ' (' + Math.round(row.pct) + '%)' + (row.hitDay ? ' — limit hit on ' + row.hitDay : ''));
+    }
+    lines.push('');
+  }
+  lines.push('## Top prompts', '');
+  if (!r.topPrompts.length) lines.push('No prompts copied yet.');
+  r.topPrompts.forEach((p, i) => lines.push((i+1) + '. ' + p.title + ' — used ' + p.usedCount + '×'));
+  return lines.join('\n');
+}
+
+/* ---- sample data (clearly replaceable; limits below are SAMPLES) ---- */
+function makeSampleData(nowMs){
+  const providers = [
+    { id: 'p-grok', name: 'Grok Bot (sample)', usageUrl: '', measure: 'percent', unitLabel: '', limit: 100,
+      reset: { type: 'weekly', weekday: 1, time: '09:00', hours: 168, day: 1 }, warn: [50, 75, 90], tz: DEFAULT_TZ },
+    { id: 'p-muse', name: 'Muse (sample)', usageUrl: '', measure: 'count', unitLabel: '', limit: 200,
+      reset: { type: 'rolling', weekday: 1, time: '09:00', hours: 168, day: 1 }, warn: [50, 75, 90], tz: DEFAULT_TZ },
+    { id: 'p-claude', name: 'Claude Pro (sample)', usageUrl: '', measure: 'percent', unitLabel: '', limit: 100,
+      reset: { type: 'weekly', weekday: 1, time: '00:00', hours: 168, day: 1 }, warn: [50, 75, 90], tz: DEFAULT_TZ }
+  ];
+  const sampleValues = { 'p-grok': [18, 41, 63], 'p-muse': [40, 95, 150], 'p-claude': [22, 48, 70] };
+  const logs = [];
+  for (const p of providers){
+    const b = windowBounds(p, nowMs);
+    [0.15, 0.45, 0.75].forEach((f, i) => {
+      logs.push({ id: 'l-' + p.id + '-' + (i+1), providerId: p.id, ts: Math.round(b.start + f * (b.end - b.start)), value: sampleValues[p.id][i], kind: 'set' });
+    });
+  }
+  const bots = [
+    { id: 'b-bolter', name: 'Bolter Listener', purpose: 'Watches the Bolter queue and wakes the worker', status: 'active', notes: 'Biggest single usage driver.', pauseChecked: false,
+      routines: [ { id: 'r-bolter-1', name: 'Queue check', schedule: 'every hour', runsPerWeekOverride: null } ] },
+    { id: 'b-wire', name: 'Research Wire', purpose: 'News briefs into the main chat', status: 'active', notes: '', pauseChecked: false,
+      routines: [ { id: 'r-wire-1', name: 'Wire scan', schedule: 'every 6h', runsPerWeekOverride: null }, { id: 'r-wire-2', name: 'Morning brief', schedule: 'daily', runsPerWeekOverride: null } ] },
+    { id: 'b-watch', name: 'Price Watcher', purpose: 'Watches a few prices', status: 'paused', notes: 'Paused during tight weeks.', pauseChecked: false,
+      routines: [ { id: 'r-watch-1', name: 'Price scan', schedule: '3x/day', runsPerWeekOverride: null } ] }
+  ];
+  const prompts = [
+    { id: 'pr-1', title: 'One-shot task', tags: ['Grok Bot', 'Claude'], example: true, usedCount: 4, notes: 'The default shape for delegated work.',
+      body: 'Goal: {{goal}}\nConstraints: {{constraints}}\nDefinition of done: {{done}}\nStop after {{limit}}. Do not keep going past the definition of done.' },
+    { id: 'pr-2', title: "Setup only, don't build", tags: ['Muse'], example: true, usedCount: 2, notes: 'Gets links back without burning build budget.',
+      body: 'Setup only — do not build. Create the repo {{repo}} and write the spec for {{feature}}. Report the repo link and the spec link, then stop.' },
+    { id: 'pr-3', title: 'Status check, one line', tags: ['Grok Bot', 'Muse', 'Claude'], example: true, usedCount: 7, notes: 'Cheapest possible status pull.',
+      body: 'Status check in one line: what is done, what is blocked. Use no tools unless needed. No reports — one line only. Stop after one line.' },
+    { id: 'pr-4', title: 'Pause all routines and confirm in one sentence', tags: ['Grok Bot'], example: true, usedCount: 1, notes: 'The usage emergency brake.',
+      body: 'Pause all routines now. Confirm in one sentence that every routine is paused, then stop.' },
+    { id: 'pr-5', title: 'Hand off to another model', tags: ['Claude', 'Muse'], example: true, usedCount: 3, notes: 'Move work to a cheaper model with a tight spec.',
+      body: 'Write a self-contained handoff spec for {{task}} in no more than {{words}} words: goal, inputs, constraints, definition of done. Stop at {{words}} words.' }
+  ];
+  return normalizeData({ version: DATA_VERSION, providers, logs, bots, prompts });
+}
+/*PURE-END*/
+
+/* ======================= app layer (browser) ======================= */
+const LS_DATA = 'usagedesk:data:v1';
+const LS_SETTINGS = 'usagedesk:settings:v1';
+const $ = id => document.getElementById(id);
+
+function h(tag, attrs, ...kids){
+  const node = document.createElement(tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)){
+    if (k === 'class') node.className = v;
+    else if (k.startsWith('on') && typeof v === 'function') node.addEventListener(k.slice(2), v);
+    else if (v === true) node.setAttribute(k, '');
+    else if (v !== false && v !== null && v !== undefined) node.setAttribute(k, String(v));
+  }
+  for (const kid of kids.flat(9)){
+    if (kid === null || kid === undefined || kid === false) continue;
+    node.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+  }
+  return node;
+}
+function uid(prefix){ return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+let toastTimer = null;
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+async function copyText(t){
+  try { await navigator.clipboard.writeText(t); return true; }
+  catch {
+    const ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    ta.remove(); return ok;
+  }
+}
+
+const SETTINGS_DEFAULTS = { reminders: false, lintThreshold: 250, sample: false, lastPcts: {}, lastResetAlert: {} };
+let settings = (() => {
+  try { return Object.assign({}, SETTINGS_DEFAULTS, JSON.parse(localStorage.getItem(LS_SETTINGS) || '{}')); }
+  catch { return { ...SETTINGS_DEFAULTS }; }
+})();
+let data = (() => {
+  try {
+    const raw = localStorage.getItem(LS_DATA);
+    if (raw) return parseImport(raw);
+  } catch (e) { setTimeout(() => toast('Saved data was unreadable — sample data loaded instead.'), 50); }
+  settings.sample = true;
+  return makeSampleData(Date.now());
+})();
+function save(){ data = normalizeData(data); localStorage.setItem(LS_DATA, JSON.stringify(data)); }
+function saveSettings(){ localStorage.setItem(LS_SETTINGS, JSON.stringify(settings)); }
+save();
+
+/* ---------------- Quick log cards ---------------- */
+function resetSummary(p){
+  const r = p.reset;
+  if (r.type === 'rolling') return 'rolling ' + r.hours + 'h window';
+  if (r.type === 'monthly') return 'resets monthly on day ' + r.day + ' at ' + r.time;
+  return 'resets weekly ' + ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][r.weekday] + ' ' + r.time;
+}
+function renderCards(){
+  const wrap = $('providerCards'); wrap.textContent = '';
+  $('noProviders').hidden = data.providers.length > 0;
+  const now = Date.now();
+  for (const p of data.providers){
+    const u = currentUsage(p, data.logs, now);
+    const unit = unitName(p);
+    const left = Math.max(0, (Number(p.limit) || 0) - u.value);
+    const status = statusForPct(u.pct);
+    const daysLeft = Math.max(0.01, (u.bounds.end - now) / DAY_MS);
+    const perDay = left / daysLeft;
+    let forecastEl;
+    if (u.entries.length < 2) forecastEl = h('p', { class: 'forecast' }, 'Forecast: ', h('strong', null, 'not enough data'), ' — log at least twice this window.');
+    else {
+      const eta = linearForecast(u.entries.map(e => ({ t: e.ts, v: e.value })), Number(p.limit) || 0);
+      if (eta === null) forecastEl = h('p', { class: 'forecast' }, 'Forecast: burn rate is flat — no limit hit projected this window.');
+      else {
+        const targetLabel = p.measure === 'percent' ? '100%' : (fmtRuns(Number(p.limit) || 0) + ' ' + unit);
+        forecastEl = h('p', { class: 'forecast' }, 'Forecast: at this pace you hit ', h('strong', null, targetLabel + ' ' + fmtWhen(eta, p.tz)), '.');
+      }
+    }
+    const setInput = h('input', { type: 'number', step: 'any', min: '0', 'aria-label': 'Current usage for ' + p.name, placeholder: p.measure === 'percent' ? 'current %' : 'current ' + unit });
+    const doSet = () => {
+      const v = parseFloat(setInput.value);
+      if (!Number.isFinite(v) || v < 0) { toast('Type the number shown on the provider\u2019s usage page first.'); setInput.focus(); return; }
+      data.logs.push({ id: uid('l'), providerId: p.id, ts: Date.now(), value: v, kind: 'set' });
+      save(); renderAll(); toast(p.name + ' set to ' + fmtRuns(v) + ' ' + unit + '.');
+    };
+    const quickRowKids = [setInput, h('button', { type: 'button', class: 'primary', onclick: doSet }, 'Set')];
+    if (p.measure !== 'percent'){
+      quickRowKids.push(h('button', { type: 'button', onclick: () => {
+        const cur = currentUsage(p, data.logs, Date.now()).value;
+        data.logs.push({ id: uid('l'), providerId: p.id, ts: Date.now(), value: cur + 1, kind: 'inc' });
+        save(); renderAll(); toast(p.name + ': +1 ' + (p.measure === 'count' ? 'message' : unit) + ' logged.');
+      } }, '+1 ' + (p.measure === 'count' ? 'message' : unit)));
+    }
+    const card = h('article', { class: 'pcard' },
+      h('h3', null, p.name, p.usageUrl ? h('a', { href: p.usageUrl, target: '_blank', rel: 'noopener' }, 'usage page ↗') : null),
+      h('p', null, h('span', { class: 'big' }, fmtRuns(u.value)), ' ', unit, ' used · ', h('span', { class: 'big' }, fmtRuns(left)), ' ', unit, ' left of ', fmtRuns(Number(p.limit) || 0)),
+      h('div', { class: 'bar' }, h('i', { class: status === 'green' ? '' : status, style: 'width:' + Math.min(100, Math.max(0, u.pct)).toFixed(1) + '%' })),
+      h('p', { class: 'small' }, h('span', { class: 'st-' + status }, Math.round(u.pct) + '% — ' + statusLabel(u.pct)), ' · ', h('span', { id: 'cd-' + p.id }, 'resets in ' + fmtCountdown(u.bounds.end - now)), ' · ', resetSummary(p)),
+      h('p', { class: 'forecast' }, 'Daily budget: ', h('strong', null, 'about ' + (p.measure === 'percent' ? (Math.round(perDay * 10) / 10) + '%' : fmtRuns(Math.round(perDay * 10) / 10) + ' ' + unit) + ' per day'), ' to finish the week.'),
+      forecastEl,
+      h('div', { class: 'quickrow' }, quickRowKids)
+    );
+    card.dataset.windowStart = String(u.bounds.start);
+    card.dataset.providerId = p.id;
+    wrap.append(card);
+  }
+}
+
+/* ---------------- Providers: list + form ---------------- */
+function renderProviderList(){
+  const wrap = $('providerList'); wrap.textContent = '';
+  for (const p of data.providers){
+    wrap.append(h('div', { class: 'item' },
+      h('div', { class: 'head' }, h('h3', null, p.name),
+        h('span', { class: 'actions' },
+          h('button', { type: 'button', onclick: () => editProvider(p.id) }, 'Edit'),
+          h('button', { type: 'button', class: 'danger', onclick: () => deleteProvider(p.id) }, 'Delete'))),
+      h('p', { class: 'small muted' },
+        'Measured as ' + (p.measure === 'percent' ? 'percent of limit' : p.measure === 'count' ? 'messages per window' : 'custom unit "' + p.unitLabel + '"') +
+        ' · limit ' + fmtRuns(p.limit) + ' ' + unitName(p) + ' · ' + resetSummary(p) + ' · ' + p.tz +
+        ' · warnings at ' + p.warn.join('/') + '%' + (p.usageUrl ? ' · ' : '')),
+      p.usageUrl ? h('p', { class: 'small' }, h('a', { href: p.usageUrl, target: '_blank', rel: 'noopener' }, 'Open usage page ↗')) : null
+    ));
+  }
+}
+function fillProviderForm(p){
+  $('pf-id').value = p ? p.id : '';
+  $('pf-name').value = p ? p.name : '';
+  $('pf-url').value = p ? p.usageUrl : '';
+  $('pf-measure').value = p ? p.measure : 'percent';
+  $('pf-unit').value = p ? p.unitLabel : '';
+  $('pf-limit').value = p ? p.limit : '';
+  $('pf-tz').value = p ? p.tz : DEFAULT_TZ;
+  $('pf-reset').value = p ? p.reset.type : 'weekly';
+  $('pf-weekday').value = p ? String(p.reset.weekday) : '1';
+  $('pf-time').value = p ? p.reset.time : '09:00';
+  $('pf-hours').value = p ? p.reset.hours : 168;
+  $('pf-day').value = p ? p.reset.day : 1;
+  $('pf-warn1').value = p ? p.warn[0] : 50;
+  $('pf-warn2').value = p ? p.warn[1] : 75;
+  $('pf-warn3').value = p ? p.warn[2] : 90;
+  $('providerFormTitle').textContent = p ? 'Edit provider' : 'Add a provider';
+  $('pf-submit').textContent = p ? 'Save provider' : 'Add provider';
+  $('pf-cancel').hidden = !p;
+  syncResetFields();
+}
+function syncResetFields(){
+  const t = $('pf-reset').value;
+  document.querySelectorAll('[data-reset]').forEach(elm => { elm.style.display = elm.dataset.reset.split(' ').includes(t) ? '' : 'none'; });
+}
+function editProvider(id){ const p = data.providers.find(x => x.id === id); if (!p) return; fillProviderForm(p); $('providers').scrollIntoView(); $('pf-name').focus(); }
+function deleteProvider(id){
+  const p = data.providers.find(x => x.id === id); if (!p) return;
+  if (!confirm('Delete provider "' + p.name + '" and its log entries?')) return;
+  data.providers = data.providers.filter(x => x.id !== id);
+  data.logs = data.logs.filter(l => l.providerId !== id);
+  save(); fillProviderForm(null); renderAll(); toast('Provider deleted.');
+}
+$('providerForm').addEventListener('submit', ev => {
+  ev.preventDefault();
+  const id = $('pf-id').value || uid('p');
+  const provider = {
+    id, name: $('pf-name').value.trim(), usageUrl: $('pf-url').value.trim(),
+    measure: $('pf-measure').value, unitLabel: $('pf-unit').value.trim(),
+    limit: parseFloat($('pf-limit').value),
+    reset: { type: $('pf-reset').value, weekday: +$('pf-weekday').value, time: $('pf-time').value || '09:00', hours: parseFloat($('pf-hours').value) || 168, day: +$('pf-day').value || 1 },
+    warn: [parseFloat($('pf-warn1').value), parseFloat($('pf-warn2').value), parseFloat($('pf-warn3').value)],
+    tz: $('pf-tz').value.trim() || DEFAULT_TZ
+  };
+  if (!provider.name) { toast('Give the provider a name.'); return; }
+  if (!Number.isFinite(provider.limit) || provider.limit < 0) { toast('Set your limit — a number, 100 for percent.'); return; }
+  const ix = data.providers.findIndex(x => x.id === id);
+  if (ix >= 0) data.providers[ix] = provider; else data.providers.push(provider);
+  save(); fillProviderForm(null); renderAll(); toast('Provider saved.');
+});
+$('pf-cancel').addEventListener('click', () => fillProviderForm(null));
+$('pf-reset').addEventListener('change', syncResetFields);
+const PRESETS = {
+  grok: { name: 'Grok Bot', measure: 'percent', reset: { type: 'weekly', weekday: 1, time: '09:00', hours: 168, day: 1 } },
+  muse: { name: 'Muse', measure: 'count', reset: { type: 'rolling', weekday: 1, time: '09:00', hours: 168, day: 1 } },
+  claude: { name: 'Claude Pro', measure: 'percent', reset: { type: 'weekly', weekday: 1, time: '00:00', hours: 168, day: 1 } }
+};
+function applyPreset(key){
+  const pr = PRESETS[key];
+  fillProviderForm(null);
+  $('pf-name').value = pr.name; $('pf-measure').value = pr.measure;
+  $('pf-reset').value = pr.reset.type; $('pf-weekday').value = String(pr.reset.weekday);
+  $('pf-time').value = pr.reset.time; $('pf-hours').value = pr.reset.hours;
+  $('pf-limit').value = ''; syncResetFields(); $('pf-limit').focus();
+  toast('Preset loaded — now type in YOUR limit (nothing is pre-filled).');
+}
+$('pf-preset-grok').addEventListener('click', () => applyPreset('grok'));
+$('pf-preset-muse').addEventListener('click', () => applyPreset('muse'));
+$('pf-preset-claude').addEventListener('click', () => applyPreset('claude'));
+
+/* ---------------- Bots & routines ---------------- */
+function buildRoutineRow(r){
+  const nameIn = h('input', { 'data-f': 'name', autocomplete: 'off', placeholder: 'Routine name' }); nameIn.value = r ? r.name : '';
+  const schedIn = h('input', { 'data-f': 'schedule', autocomplete: 'off', placeholder: 'every 6h · 3x/day · daily · weekdays · weekly' }); schedIn.value = r ? r.schedule : '';
+  const overIn = h('input', { 'data-f': 'override', type: 'number', step: 'any', min: '0', placeholder: 'auto' }); overIn.value = r && r.runsPerWeekOverride !== null ? r.runsPerWeekOverride : '';
+  const row = h('div', { class: 'routine-row' },
+    h('div', null, h('label', null, 'Routine'), nameIn),
+    h('div', null, h('label', null, 'Schedule'), schedIn),
+    h('div', null, h('label', null, 'Runs/week (manual)'), overIn),
+    h('button', { type: 'button', class: 'danger', onclick: () => row.remove() }, 'Remove'));
+  return row;
+}
+function collectRoutines(){
+  return [...$('bf-routines').querySelectorAll('.routine-row')].map(row => ({
+    id: row.dataset.rid || uid('r'),
+    name: row.querySelector('[data-f="name"]').value.trim(),
+    schedule: row.querySelector('[data-f="schedule"]').value.trim(),
+    runsPerWeekOverride: row.querySelector('[data-f="override"]').value === '' ? null : parseFloat(row.querySelector('[data-f="override"]').value)
+  })).filter(r => r.name || r.schedule);
+}
+function fillBotForm(b){
+  $('bf-id').value = b ? b.id : '';
+  $('bf-name').value = b ? b.name : '';
+  $('bf-purpose').value = b ? b.purpose : '';
+  $('bf-status').value = b ? b.status : 'active';
+  $('bf-notes').value = b ? b.notes : '';
+  const wrap = $('bf-routines'); wrap.textContent = '';
+  const rows = b && b.routines.length ? b.routines : [null];
+  for (const r of rows){ const row = buildRoutineRow(r); if (r) row.dataset.rid = r.id; wrap.append(row); }
+  $('botFormTitle').textContent = b ? 'Edit bot' : 'Add a bot';
+  $('bf-submit').textContent = b ? 'Save bot' : 'Add bot';
+  $('bf-cancel').hidden = !b;
+}
+$('bf-add-routine').addEventListener('click', () => $('bf-routines').append(buildRoutineRow(null)));
+$('botForm').addEventListener('submit', ev => {
+  ev.preventDefault();
+  const id = $('bf-id').value || uid('b');
+  const bot = { id, name: $('bf-name').value.trim(), purpose: $('bf-purpose').value.trim(), status: $('bf-status').value, notes: $('bf-notes').value.trim(), pauseChecked: false, routines: collectRoutines() };
+  if (!bot.name) { toast('Give the bot a name.'); return; }
+  const old = data.bots.find(x => x.id === id);
+  if (old) bot.pauseChecked = old.pauseChecked;
+  const ix = data.bots.findIndex(x => x.id === id);
+  if (ix >= 0) data.bots[ix] = bot; else data.bots.push(bot);
+  save(); fillBotForm(null); renderAll(); toast('Bot saved.');
+});
+$('bf-cancel').addEventListener('click', () => fillBotForm(null));
+function renderBots(){
+  const wrap = $('botList'); wrap.textContent = '';
+  const sorted = data.bots.slice().sort((a, b) => {
+    if ((a.status === 'deleted') !== (b.status === 'deleted')) return a.status === 'deleted' ? 1 : -1;
+    return botRunsPerWeek(b).total - botRunsPerWeek(a).total;
+  });
+  if (!sorted.length) wrap.append(h('p', { class: 'muted small' }, 'No bots tracked yet.'));
+  for (const b of sorted){
+    const runs = botRunsPerWeek(b);
+    const routineRows = b.routines.map(r => {
+      const n = routineRunsPerWeek(r);
+      return h('tr', null, h('td', null, r.name || '(unnamed)'), h('td', null, r.schedule || '—'), h('td', null, n === null ? 'unknown — add a manual runs/week' : fmtRuns(n) + '/wk'));
+    });
+    wrap.append(h('div', { class: 'item' + (b.status === 'deleted' ? ' deleted' : '') },
+      h('div', { class: 'head' },
+        h('h3', null, b.name + ' ', h('span', { class: 'tag' }, b.status)),
+        h('span', { class: 'actions' },
+          h('button', { type: 'button', onclick: () => { fillBotForm(b); $('bots').scrollIntoView(); $('bf-name').focus(); } }, 'Edit'),
+          h('button', { type: 'button', class: 'danger', onclick: () => { if (confirm('Remove bot "' + b.name + '" from the tracker?')) { data.bots = data.bots.filter(x => x.id !== b.id); save(); renderAll(); } } }, 'Delete'))),
+      b.purpose ? h('p', { class: 'small' }, b.purpose) : null,
+      h('p', { class: 'small' }, 'Estimated load: ', h('strong', null, fmtRuns(runs.total) + ' runs/week'), runs.unknown ? ' (plus routines with unknown schedules)' : ''),
+      routineRows.length ? h('table', null, h('thead', null, h('tr', null, ['Routine', 'Schedule', 'Runs'].map(t => h('th', null, t)))), h('tbody', null, routineRows)) : h('p', { class: 'small muted' }, 'No routines.'),
+      b.notes ? h('p', { class: 'small muted' }, b.notes) : null
+    ));
+  }
+}
+function renderPausePlan(){
+  const wrap = $('pausePlan'); wrap.textContent = '';
+  const active = data.bots.filter(b => b.status === 'active')
+    .sort((a, b) => botRunsPerWeek(b).total - botRunsPerWeek(a).total);
+  if (!active.length) { wrap.append(h('p', { class: 'muted small' }, 'No active bots — nothing to pause.')); return; }
+  for (const b of active){
+    const box = h('input', { type: 'checkbox', 'aria-label': 'Routines paused for ' + b.name });
+    box.checked = !!b.pauseChecked;
+    box.addEventListener('change', () => { const bot = data.bots.find(x => x.id === b.id); if (bot) bot.pauseChecked = box.checked; save(); renderPausePlan(); });
+    wrap.append(h('div', { class: 'checkline' + (b.pauseChecked ? ' done' : '') }, box,
+      h('span', null, b.name + ' — routines paused ', h('span', { class: 'muted small' }, '(' + fmtRuns(botRunsPerWeek(b).total) + ' runs/week saved)'))));
+  }
+}
+
+/* ---------------- Prompt library ---------------- */
+function fillPromptForm(p){
+  $('prf-id').value = p ? p.id : '';
+  $('prf-title').value = p ? p.title : '';
+  $('prf-tags').value = p ? p.tags.join(', ') : '';
+  $('prf-body').value = p ? p.body : '';
+  $('prf-notes').value = p ? p.notes : '';
+  $('promptFormTitle').textContent = p ? 'Edit prompt' : 'Add a prompt';
+  $('prf-submit').textContent = p ? 'Save prompt' : 'Add prompt';
+  $('prf-cancel').hidden = !p;
+}
+$('promptForm').addEventListener('submit', ev => {
+  ev.preventDefault();
+  const id = $('prf-id').value || uid('pr');
+  const old = data.prompts.find(x => x.id === id);
+  const prompt = { id, title: $('prf-title').value.trim(), tags: $('prf-tags').value.split(','), body: $('prf-body').value, notes: $('prf-notes').value.trim(), usedCount: old ? old.usedCount : 0, example: old ? old.example : false };
+  if (!prompt.title) { toast('Give the prompt a title.'); return; }
+  if (!prompt.body.trim()) { toast('The prompt body is empty.'); return; }
+  const ix = data.prompts.findIndex(x => x.id === id);
+  if (ix >= 0) data.prompts[ix] = prompt; else data.prompts.push(prompt);
+  save(); fillPromptForm(null); renderAll(); toast('Prompt saved.');
+});
+$('prf-cancel').addEventListener('click', () => fillPromptForm(null));
+$('lintThreshold').addEventListener('change', () => {
+  const v = parseInt($('lintThreshold').value, 10);
+  settings.lintThreshold = Number.isFinite(v) && v > 0 ? v : 250;
+  saveSettings(); renderPrompts();
+});
+function renderPrompts(){
+  const wrap = $('promptList'); wrap.textContent = '';
+  if (!data.prompts.length) wrap.append(h('p', { class: 'muted small' }, 'No prompts yet.'));
+  for (const p of data.prompts){
+    const vars = extractVars(p.body);
+    const varInputs = {};
+    const varsWrap = h('div', { class: 'vars' });
+    for (const v of vars){
+      const inp = h('input', { autocomplete: 'off', 'aria-label': 'Value for ' + v });
+      varInputs[v] = inp;
+      varsWrap.append(h('div', null, h('label', null, '{{' + v + '}}'), inp));
+    }
+    const hints = lintPrompt(p.body, settings.lintThreshold);
+    wrap.append(h('div', { class: 'item' },
+      h('div', { class: 'head' },
+        h('h3', null, p.title + ' ', p.example ? h('span', { class: 'tag ex' }, 'example') : null, p.tags.map(t => h('span', { class: 'tag' }, t))),
+        h('span', { class: 'actions' },
+          h('button', { type: 'button', onclick: () => { fillPromptForm(p); $('prompts').scrollIntoView(); $('prf-title').focus(); } }, 'Edit'),
+          h('button', { type: 'button', class: 'danger', onclick: () => { if (confirm('Delete prompt "' + p.title + '"?')) { data.prompts = data.prompts.filter(x => x.id !== p.id); save(); renderAll(); } } }, 'Delete'))),
+      h('div', { class: 'review-out', style: 'margin-top:8px' }, p.body),
+      h('p', { class: 'small muted', style: 'margin-top:8px' }, p.body.length + ' chars · ~' + approxTokens(p.body) + ' approx tokens · used ' + p.usedCount + '×' + (p.notes ? ' · ' + p.notes : '')),
+      hints.length
+        ? h('ul', { class: 'hints' }, hints.map(x => h('li', null, x)))
+        : h('ul', { class: 'hints' }, h('li', { class: 'ok' }, 'No efficiency hints — tight prompt.')),
+      vars.length ? varsWrap : null,
+      h('div', { class: 'form-actions' },
+        h('button', { type: 'button', class: 'primary', onclick: async (ev) => {
+          const values = {}; for (const v of vars) values[v] = varInputs[v].value;
+          const filled = fillTemplate(p.body, values);
+          const btn = ev.currentTarget;
+          if (await copyText(filled)) { const target = data.prompts.find(x => x.id === p.id); if (target) target.usedCount += 1; save(); renderPrompts(); renderReview(); toast('Copied — paste it into the bot.'); }
+          else { btn.textContent = 'Copy blocked — select the text above'; }
+        } }, vars.length ? 'Fill & copy prompt' : 'Copy prompt'))
+    ));
+  }
+}
+
+/* ---------------- Weekly review ---------------- */
+function renderReview(){
+  const out = $('reviewOut'); out.textContent = '';
+  const r = buildReview(data, Date.now());
+  if (!r.weeks.length && !r.topPrompts.length) out.append(h('p', { class: 'muted small' }, 'Nothing to review yet — log some usage and copy some prompts.'));
+  for (const w of r.weeks){
+    out.append(h('h3', { style: 'margin-top:10px' }, 'Week of ' + w.label));
+    out.append(h('table', null,
+      h('thead', null, h('tr', null, ['Provider', 'Peak', 'Peak %', 'Limit hit'].map(t => h('th', null, t)))),
+      h('tbody', null, w.rows.map(row => h('tr', null,
+        h('td', null, row.providerName), h('td', null, fmtRuns(row.peak) + ' / ' + fmtRuns(row.limit)),
+        h('td', null, Math.round(row.pct) + '%'), h('td', null, row.hitDay || '—'))))));
+  }
+  if (r.topPrompts.length){
+    out.append(h('h3', { style: 'margin-top:14px' }, 'Top prompts'));
+    out.append(h('ol', null, r.topPrompts.map(p => h('li', { style: 'margin-left:18px' }, p.title + ' — used ' + p.usedCount + '×'))));
+  }
+}
+$('copyReviewBtn').addEventListener('click', async () => {
+  if (await copyText(reviewMarkdown(data, Date.now()))) toast('Weekly review copied as Markdown.');
+  else toast('Copy was blocked by the browser.');
+});
+
+/* ---------------- Data: export / import / clear ---------------- */
+$('exportBtn').addEventListener('click', () => {
+  const blob = new Blob([serializeData(data)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'usage-desk-export.json';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  toast('Exported usage-desk-export.json');
+});
+$('importFile').addEventListener('change', async ev => {
+  const file = ev.target.files[0]; ev.target.value = '';
+  if (!file) return;
+  const msg = $('importMsg');
+  try {
+    const imported = parseImport(await file.text());
+    if (!confirm('Import replaces ALL current data with the file\u2019s data. Continue?')) { msg.textContent = 'Import cancelled.'; return; }
+    data = imported; settings.sample = false;
+    save(); saveSettings(); fillProviderForm(null); fillBotForm(null); fillPromptForm(null); renderAll();
+    msg.textContent = 'Import complete — data replaced from file.';
+    toast('Import complete.');
+  } catch (e) { msg.textContent = 'Import failed: ' + e.message; }
+});
+function clearEverything(sampleOnly){
+  if (!confirm(sampleOnly ? 'Clear the sample data and start with a blank desk?' : 'Clear ALL Usage Desk data from this browser? Export first if you want a backup.')) return;
+  data = normalizeData({ version: DATA_VERSION, providers: [], logs: [], bots: [], prompts: [] });
+  settings.sample = false; settings.lastPcts = {}; settings.lastResetAlert = {};
+  save(); saveSettings(); fillProviderForm(null); fillBotForm(null); fillPromptForm(null); renderAll();
+  toast('Cleared. Blank desk — add your first provider.');
+}
+$('clearAllBtn').addEventListener('click', () => clearEverything(false));
+$('clearSampleBtn').addEventListener('click', () => clearEverything(true));
+
+/* ---------------- Reminders (tab-open only) ---------------- */
+function checkReminders(){
+  if (!settings.reminders || !('Notification' in window) || Notification.permission !== 'granted') return;
+  const now = Date.now(); let dirty = false;
+  for (const p of data.providers){
+    const u = currentUsage(p, data.logs, now);
+    const last = settings.lastPcts[p.id];
+    if (last !== undefined){
+      for (const t of p.warn) if (last < t && u.pct >= t){
+        try { new Notification('Usage Desk', { body: p.name + ' crossed ' + t + '% — now at ' + Math.round(u.pct) + '% of your limit.' }); } catch {}
+      }
+    }
+    if (settings.lastPcts[p.id] !== u.pct) { settings.lastPcts[p.id] = u.pct; dirty = true; }
+    const remain = u.bounds.end - now;
+    if (remain > 0 && remain <= HOUR_MS && settings.lastResetAlert[p.id] !== u.bounds.end){
+      try { new Notification('Usage Desk', { body: p.name + ' resets in ' + fmtCountdown(remain) + '.' }); } catch {}
+      settings.lastResetAlert[p.id] = u.bounds.end; dirty = true;
+    }
+  }
+  if (dirty) saveSettings();
+}
+$('reminderToggle').addEventListener('change', async ev => {
+  if (!ev.target.checked) { settings.reminders = false; saveSettings(); return; }
+  if (!('Notification' in window)) { toast('This browser has no Notification API.'); ev.target.checked = false; return; }
+  const perm = await Notification.requestPermission();
+  if (perm === 'granted') { settings.reminders = true; settings.lastPcts = {}; saveSettings(); toast('Reminders on — only while this tab is open.'); }
+  else { ev.target.checked = false; toast('Notification permission was not granted.'); }
+});
+
+/* ---------------- render loop ---------------- */
+function renderAll(){
+  $('sampleBanner').classList.toggle('show', !!settings.sample);
+  renderCards(); renderProviderList(); renderBots(); renderPausePlan(); renderPrompts(); renderReview();
+}
+function tick(){
+  const now = Date.now(); let stale = false;
+  document.querySelectorAll('#providerCards .pcard').forEach(card => {
+    const p = data.providers.find(x => x.id === card.dataset.providerId); if (!p) return;
+    const b = windowBounds(p, now);
+    if (String(b.start) !== card.dataset.windowStart) stale = true;
+    const cd = document.getElementById('cd-' + p.id);
+    if (cd) cd.textContent = 'resets in ' + fmtCountdown(b.end - now);
+  });
+  if (stale) renderAll();
+  checkReminders();
+}
+$('lintThreshold').value = settings.lintThreshold;
+$('reminderToggle').checked = !!settings.reminders;
+fillProviderForm(null); fillBotForm(null); fillPromptForm(null);
+renderAll();
+setInterval(tick, 30000);
+</script>
+</body>
+</html>
