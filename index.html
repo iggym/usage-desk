@@ -103,7 +103,7 @@ footer{margin-top:26px;border-top:1px solid var(--border);padding-top:14px;color
 <body>
 <header class="top">
   <h1>USAGE<span class="dot">_</span>DESK</h1>
-  <p class="privacy"><strong>Private by design:</strong> this page makes no network calls and sends nothing anywhere. All data lives in this browser's localStorage. None of these services offers a usage API, so usage is typed in by hand — and no plan limits are baked in: you set your own.</p>
+  <p class="privacy"><strong>Private by design:</strong> this page makes no network calls and sends nothing anywhere. All data lives in this browser's localStorage. None of these services offers an official usage API, so usage is mostly typed in by hand (Claude has an unofficial shortcut — see Usage snapshots under Data) — and no plan limits are baked in: you set your own.</p>
   <nav class="toc" aria-label="Sections">
     <a href="#quicklog">Quick log</a>
     <a href="#providers">Providers</a>
@@ -240,6 +240,24 @@ footer{margin-top:26px;border-top:1px solid var(--border);padding-top:14px;color
     <button type="button" id="clearAllBtn" class="danger">Clear all data</button>
   </div>
   <p class="small muted" id="importMsg" role="status"></p>
+
+  <h3 style="margin-top:18px">Usage snapshots</h3>
+  <p class="sec-note">A snapshot is a small JSON file that says "this provider was at X% when I looked". Import one and Usage Desk logs it for you — same as typing the number into Quick log.</p>
+  <p class="sec-note"><strong>Claude:</strong> Claude's app has an internal usage endpoint your browser session can already read. Drag this link to your bookmarks bar, open claude.ai, and click it there — it downloads a snapshot file, which you import below. Fine print, plainly: it uses an <em>unofficial</em> endpoint that may break if Anthropic changes it; it runs only on claude.ai; it sends nothing anywhere — the only output is the file it downloads to your machine.</p>
+  <div class="form-actions">
+    <a id="bookmarkletLink" href="javascript:(()%20%3D%3E%20%7B%20'use%20strict'%3B%20function%20snapshotWindow(win)%20%7B%20if%20(!win%20%7C%7C%20typeof%20win%20!%3D%3D%20'object')%20return%20null%3B%20const%20u%20%3D%20Number(win.utilization)%3B%20if%20(!Number.isFinite(u))%20return%20null%3B%20const%20pct%20%3D%20u%20%3C%3D%201.5%20%3F%20u%20*%20100%20%3A%20u%3B%20const%20resetRaw%20%3D%20win.reset_at%20%7C%7C%20win.resets_at%20%7C%7C%20null%3B%20const%20resetMs%20%3D%20resetRaw%20%3F%20Date.parse(resetRaw)%20%3A%20NaN%3B%20return%20%7B%20used_percent%3A%20Math.round(Math.min(100%2C%20Math.max(0%2C%20pct))%20*%2010)%20%2F%2010%2C%20resets_at%3A%20Number.isFinite(resetMs)%20%3F%20new%20Date(resetMs).toISOString()%20%3A%20null%20%7D%3B%20%7D%20function%20usageToSnapshot(usage%2C%20capturedAtIso)%20%7B%20if%20(!usage%20%7C%7C%20typeof%20usage%20!%3D%3D%20'object')%20return%20null%3B%20const%20weekly%20%3D%20snapshotWindow(usage.seven_day)%3B%20if%20(!weekly)%20return%20null%3B%20return%20%7B%20kind%3A%20'usage-snapshot'%2C%20version%3A%201%2C%20source%3A%20'claude-bookmarklet'%2C%20provider_hint%3A%20'claude'%2C%20captured_at%3A%20capturedAtIso%2C%20weekly%3A%20weekly%2C%20session%3A%20snapshotWindow(usage.five_hour)%2C%20raw%3A%20usage%20%7D%3B%20%7D%20function%20orgIdFromOrgs(orgs)%20%7B%20if%20(!Array.isArray(orgs)%20%7C%7C%20!orgs.length)%20return%20null%3B%20const%20first%20%3D%20orgs%5B0%5D%3B%20if%20(!first%20%7C%7C%20typeof%20first%20!%3D%3D%20'object')%20return%20null%3B%20return%20first.uuid%20%7C%7C%20first.id%20%7C%7C%20null%3B%20%7D%20if%20(typeof%20module%20!%3D%3D%20'undefined'%20%26%26%20module.exports)%20%7B%20module.exports%20%3D%20%7B%20usageToSnapshot%3A%20usageToSnapshot%2C%20orgIdFromOrgs%3A%20orgIdFromOrgs%2C%20snapshotWindow%3A%20snapshotWindow%20%7D%3B%20return%3B%20%7D%20(async%20()%20%3D%3E%20%7B%20try%20%7B%20if%20(!location.hostname.endsWith('claude.ai'))%20%7B%20alert('Open%20claude.ai%20first%2C%20log%20in%2C%20then%20run%20this%20again%20on%20that%20tab.%20Nothing%20was%20downloaded.')%3B%20return%3B%20%7D%20const%20orgRes%20%3D%20await%20fetch('%2Fapi%2Forganizations'%2C%20%7B%20credentials%3A%20'include'%20%7D)%3B%20if%20(!orgRes.ok)%20%7B%20alert('Claude%20did%20not%20answer%20the%20organizations%20lookup%20(HTTP%20'%20%2B%20orgRes.status%20%2B%20').%20Are%20you%20logged%20in%20on%20this%20tab%3F%20Nothing%20was%20downloaded.')%3B%20return%3B%20%7D%20const%20orgs%20%3D%20await%20orgRes.json()%3B%20const%20orgId%20%3D%20orgIdFromOrgs(orgs)%3B%20if%20(!orgId)%20%7B%20alert('Could%20not%20find%20an%20organization%20id%20in%20what%20Claude%20returned%3A%20'%20%2B%20JSON.stringify(orgs).slice(0%2C%20200)%20%2B%20'%5CnNothing%20was%20downloaded.')%3B%20return%3B%20%7D%20const%20usageRes%20%3D%20await%20fetch('%2Fapi%2Forganizations%2F'%20%2B%20encodeURIComponent(orgId)%20%2B%20'%2Fusage'%2C%20%7B%20credentials%3A%20'include'%20%7D)%3B%20if%20(!usageRes.ok)%20%7B%20alert('Claude%20did%20not%20answer%20the%20usage%20lookup%20(HTTP%20'%20%2B%20usageRes.status%20%2B%20').%20Nothing%20was%20downloaded.')%3B%20return%3B%20%7D%20const%20usage%20%3D%20await%20usageRes.json()%3B%20if%20(!usage%20%7C%7C%20typeof%20usage%20!%3D%3D%20'object'%20%7C%7C%20(!usage.five_hour%20%26%26%20!usage.seven_day))%20%7B%20alert('The%20usage%20endpoint%20answered%2C%20but%20not%20with%20the%20expected%20five_hour%20%2F%20seven_day%20data%3A%20'%20%2B%20JSON.stringify(usage).slice(0%2C%20200)%20%2B%20'%5CnNothing%20was%20downloaded.')%3B%20return%3B%20%7D%20const%20now%20%3D%20new%20Date()%3B%20const%20snapshot%20%3D%20usageToSnapshot(usage%2C%20now.toISOString())%3B%20if%20(!snapshot)%20%7B%20alert('The%20usage%20data%20had%20no%20readable%20weekly%20(seven_day)%20number%20in%20it%3A%20'%20%2B%20JSON.stringify(usage).slice(0%2C%20200)%20%2B%20'%5CnNothing%20was%20downloaded.')%3B%20return%3B%20%7D%20const%20pad%20%3D%20(n)%20%3D%3E%20String(n).padStart(2%2C%20'0')%3B%20const%20stamp%20%3D%20now.getFullYear()%20%2B%20pad(now.getMonth()%20%2B%201)%20%2B%20pad(now.getDate())%20%2B%20'-'%20%2B%20pad(now.getHours())%20%2B%20pad(now.getMinutes())%3B%20const%20blob%20%3D%20new%20Blob(%5BJSON.stringify(snapshot%2C%20null%2C%202)%5D%2C%20%7B%20type%3A%20'application%2Fjson'%20%7D)%3B%20const%20a%20%3D%20document.createElement('a')%3B%20a.href%20%3D%20URL.createObjectURL(blob)%3B%20a.download%20%3D%20'claude-usage-snapshot-'%20%2B%20stamp%20%2B%20'.json'%3B%20document.body.appendChild(a)%3B%20a.click()%3B%20a.remove()%3B%20setTimeout(()%20%3D%3E%20URL.revokeObjectURL(a.href)%2C%202000)%3B%20alert('Snapshot%20downloaded%3A%20weekly%20usage%20at%20'%20%2B%20snapshot.weekly.used_percent%20%2B%20'%25.%20Import%20it%20in%20Usage%20Desk%20under%20Data%20%26%20reminders%2C%20Usage%20snapshots.')%3B%20%7D%20catch%20(err)%20%7B%20alert('Snapshot%20failed%3A%20'%20%2B%20(err%20%26%26%20err.message%20%3F%20err.message%20%3A%20String(err))%20%2B%20'%5CnNothing%20was%20sent%20anywhere.%20If%20Claude%20changed%20its%20internal%20endpoint%2C%20this%20bookmarklet%20needs%20an%20update.')%3B%20%7D%20%7D)()%3B%20%7D)()%3B" style="display:inline-block;padding:8px 12px;border:1px solid #1E293B;border-radius:8px;color:#FF4F00;text-decoration:none;cursor:grab">📥 Get Claude snapshot — drag me to your bookmarks bar</a>
+    <button type="button" id="copySnapshotCodeBtn">Copy code for console</button>
+  </div>
+  <p class="sec-note">No bookmarks bar? The button copies the same code — paste it into the DevTools console on a claude.ai tab instead. The code is also in <span class="tag">claude-snapshot.js</span> next to this page if you want to read it first.</p>
+  <p class="sec-note"><strong>Grok Bot and Muse</strong> have no usage endpoint. Screenshot the usage page, send it to fantasias in chat, and import the snapshot file you get back here.</p>
+  <div class="form-actions">
+    <label for="snapshotFile" style="margin:0;display:inline-block"><span class="kbd-hint">Snapshot file:</span></label>
+    <input type="file" id="snapshotFile" accept="application/json,.json" style="width:auto;border:none;padding:0">
+  </div>
+  <div id="snapshotPreview"></div>
+  <div class="form-actions"><button type="button" id="snapshotConfirmBtn" class="primary" disabled>Import snapshot</button></div>
+  <p class="small muted" id="snapshotMsg" role="status"></p>
+
   <h3 style="margin-top:18px">Reminders</h3>
   <div class="switch">
     <input type="checkbox" id="reminderToggle">
@@ -253,6 +271,122 @@ footer{margin-top:26px;border-top:1px solid var(--border);padding-top:14px;color
 </footer>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- Readable source of the Claude snapshot bookmarklet (same code as
+     claude-snapshot.js next to this file). Not rendered; the "Copy code
+     for console" button copies this text. -->
+<script type="text/plain" id="claudeSnapshotSrc">/*
+ * Claude usage snapshot — for Usage Desk.
+ *
+ * Run this on claude.ai while logged in (drag it to your bookmarks bar
+ * from Usage Desk, or paste it into the DevTools console on a claude.ai
+ * tab). It reads Claude's own internal usage endpoint with your existing
+ * browser session and downloads ONE JSON file — a Usage Desk
+ * "usage snapshot" — to your machine.
+ *
+ * It sends nothing anywhere: the only requests are same-origin GETs to
+ * claude.ai itself, and the only output is the downloaded file.
+ *
+ * The endpoint is unofficial. If Anthropic changes it, this stops with
+ * an alert showing what came back instead of downloading anything.
+ */
+(() => {
+  'use strict';
+
+  /* ---- pure transform: claude.ai usage payload -> Usage Desk snapshot.
+          Side-effect free so it can be unit-tested in Node. ---- */
+  function snapshotWindow(win) {
+    if (!win || typeof win !== 'object') return null;
+    const u = Number(win.utilization);
+    if (!Number.isFinite(u)) return null;
+    const pct = u <= 1.5 ? u * 100 : u;
+    const resetRaw = win.reset_at || win.resets_at || null;
+    const resetMs = resetRaw ? Date.parse(resetRaw) : NaN;
+    return {
+      used_percent: Math.round(Math.min(100, Math.max(0, pct)) * 10) / 10,
+      resets_at: Number.isFinite(resetMs) ? new Date(resetMs).toISOString() : null
+    };
+  }
+
+  function usageToSnapshot(usage, capturedAtIso) {
+    if (!usage || typeof usage !== 'object') return null;
+    const weekly = snapshotWindow(usage.seven_day);
+    if (!weekly) return null;
+    return {
+      kind: 'usage-snapshot',
+      version: 1,
+      source: 'claude-bookmarklet',
+      provider_hint: 'claude',
+      captured_at: capturedAtIso,
+      weekly: weekly,
+      session: snapshotWindow(usage.five_hour),
+      raw: usage
+    };
+  }
+
+  function orgIdFromOrgs(orgs) {
+    if (!Array.isArray(orgs) || !orgs.length) return null;
+    const first = orgs[0];
+    if (!first || typeof first !== 'object') return null;
+    return first.uuid || first.id || null;
+  }
+
+  /* Under Node (unit tests) export the pure pieces and do not run. */
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { usageToSnapshot: usageToSnapshot, orgIdFromOrgs: orgIdFromOrgs, snapshotWindow: snapshotWindow };
+    return;
+  }
+
+  /* ---- browser flow ---- */
+  (async () => {
+    try {
+      if (!location.hostname.endsWith('claude.ai')) {
+        alert('Open claude.ai first, log in, then run this again on that tab. Nothing was downloaded.');
+        return;
+      }
+      const orgRes = await fetch('/api/organizations', { credentials: 'include' });
+      if (!orgRes.ok) {
+        alert('Claude did not answer the organizations lookup (HTTP ' + orgRes.status + '). Are you logged in on this tab? Nothing was downloaded.');
+        return;
+      }
+      const orgs = await orgRes.json();
+      const orgId = orgIdFromOrgs(orgs);
+      if (!orgId) {
+        alert('Could not find an organization id in what Claude returned: ' + JSON.stringify(orgs).slice(0, 200) + '\nNothing was downloaded.');
+        return;
+      }
+      const usageRes = await fetch('/api/organizations/' + encodeURIComponent(orgId) + '/usage', { credentials: 'include' });
+      if (!usageRes.ok) {
+        alert('Claude did not answer the usage lookup (HTTP ' + usageRes.status + '). Nothing was downloaded.');
+        return;
+      }
+      const usage = await usageRes.json();
+      if (!usage || typeof usage !== 'object' || (!usage.five_hour && !usage.seven_day)) {
+        alert('The usage endpoint answered, but not with the expected five_hour / seven_day data: ' + JSON.stringify(usage).slice(0, 200) + '\nNothing was downloaded.');
+        return;
+      }
+      const now = new Date();
+      const snapshot = usageToSnapshot(usage, now.toISOString());
+      if (!snapshot) {
+        alert('The usage data had no readable weekly (seven_day) number in it: ' + JSON.stringify(usage).slice(0, 200) + '\nNothing was downloaded.');
+        return;
+      }
+      const pad = (n) => String(n).padStart(2, '0');
+      const stamp = now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate()) + '-' + pad(now.getHours()) + pad(now.getMinutes());
+      const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'claude-usage-snapshot-' + stamp + '.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      alert('Snapshot downloaded: weekly usage at ' + snapshot.weekly.used_percent + '%. Import it in Usage Desk under Data & reminders, Usage snapshots.');
+    } catch (err) {
+      alert('Snapshot failed: ' + (err && err.message ? err.message : String(err)) + '\nNothing was sent anywhere. If Claude changed its internal endpoint, this bookmarklet needs an update.');
+    }
+  })();
+})();</script>
 
 <script type="module">
 /* =====================================================================
@@ -470,7 +604,10 @@ function normalizeProvider(p, i){
 }
 function normalizeLog(l, i){
   if (!isObj(l)) throw new Error('logs[' + i + '] is not an object');
-  return { id: strOr(l.id) || ('l' + (i+1)), providerId: strOr(l.providerId), ts: numOr(l.ts, 0), value: numOr(l.value, 0), kind: l.kind === 'inc' ? 'inc' : 'set' };
+  const out = { id: strOr(l.id) || ('l' + (i+1)), providerId: strOr(l.providerId), ts: numOr(l.ts, 0), value: numOr(l.value, 0), kind: l.kind === 'inc' ? 'inc' : 'set' };
+  const note = strOr(l.note);
+  if (note) out.note = note; /* optional (snapshot imports); absent on old data, which still loads unchanged */
+  return out;
 }
 function normalizeBot(b, i){
   if (!isObj(b)) throw new Error('bots[' + i + '] is not an object');
@@ -525,6 +662,109 @@ function parseImport(text){
   let raw;
   try { raw = JSON.parse(text); } catch { throw new Error('That file is not valid JSON.'); }
   return normalizeData(raw);
+}
+
+/* ---- usage snapshots: one shared shape, produced by the Claude
+        bookmarklet or by screenshot extraction (Grok Bot / Muse), and
+        imported here. Shape:
+        { kind:'usage-snapshot', version:1,
+          source:'claude-bookmarklet'|'screenshot-extraction',
+          provider_hint:'claude'|'grok'|'muse'|null,
+          captured_at: ISO string|null,
+          weekly:{ used_percent:0..100, resets_at: ISO|null },
+          session:{ used_percent, resets_at }|null,
+          raw: object|null }
+        parseSnapshot also accepts the RAW claude.ai endpoint payload
+        ({ five_hour:{utilization, reset_at}, seven_day:{...} }) and
+        normalizes it into the same shape. Tolerance: the reset field may
+        be reset_at or resets_at; utilization may be a fraction (<=1.5)
+        or already a percent (>1.5). ---- */
+const SNAPSHOT_SOURCES = ['claude-bookmarklet', 'screenshot-extraction'];
+const SNAPSHOT_HINTS = ['claude', 'grok', 'muse'];
+function snapshotPct(x){
+  const n = Number(x);
+  if (!Number.isFinite(n)) return null;
+  return Math.round(Math.min(100, Math.max(0, n)) * 10) / 10;
+}
+function snapshotIso(x){
+  if (!x) return null;
+  const ms = Date.parse(x);
+  return Number.isFinite(ms) ? new Date(ms).toISOString() : null;
+}
+function snapshotWindowFrom(win){
+  if (!isObj(win)) return null;
+  const u = Number(win.utilization);
+  if (!Number.isFinite(u)) return null;
+  const pct = u <= 1.5 ? u * 100 : u;
+  return { used_percent: Math.round(Math.min(100, Math.max(0, pct)) * 10) / 10, resets_at: snapshotIso(win.reset_at ?? win.resets_at ?? null) };
+}
+function parseSnapshot(input){
+  let raw = input;
+  if (typeof input === 'string'){
+    try { raw = JSON.parse(input); } catch { return { ok: false, error: 'That file is not valid JSON.' }; }
+  }
+  if (!isObj(raw)) return { ok: false, error: 'A snapshot must be a JSON object.' };
+  if (raw.kind === undefined && (isObj(raw.five_hour) || isObj(raw.seven_day))){
+    const weekly = snapshotWindowFrom(raw.seven_day);
+    if (!weekly) return { ok: false, error: 'That usage data has no weekly (seven_day) number to import.' };
+    return { ok: true, snapshot: {
+      kind: 'usage-snapshot', version: 1, source: 'claude-bookmarklet', provider_hint: 'claude',
+      captured_at: new Date().toISOString(), weekly, session: snapshotWindowFrom(raw.five_hour), raw
+    } };
+  }
+  if (raw.kind !== 'usage-snapshot') return { ok: false, error: 'Not a usage snapshot' + (raw.kind !== undefined ? ' (its kind is "' + strOr(raw.kind) + '")' : '') + '.' };
+  if (raw.version !== undefined && Number(raw.version) !== 1) return { ok: false, error: 'Unsupported snapshot version: ' + strOr(raw.version) + ' (expected 1).' };
+  if (!isObj(raw.weekly)) return { ok: false, error: 'Snapshot is missing its weekly usage block.' };
+  const weeklyPct = snapshotPct(raw.weekly.used_percent);
+  if (weeklyPct === null) return { ok: false, error: 'Snapshot weekly used_percent is not a number.' };
+  let session = null;
+  if (isObj(raw.session)){
+    const sp = snapshotPct(raw.session.used_percent);
+    if (sp !== null) session = { used_percent: sp, resets_at: snapshotIso(raw.session.resets_at) };
+  }
+  const hint = String(raw.provider_hint || '').toLowerCase();
+  return { ok: true, snapshot: {
+    kind: 'usage-snapshot', version: 1,
+    source: SNAPSHOT_SOURCES.includes(raw.source) ? raw.source : 'screenshot-extraction',
+    provider_hint: SNAPSHOT_HINTS.includes(hint) ? hint : null,
+    captured_at: snapshotIso(raw.captured_at),
+    weekly: { used_percent: weeklyPct, resets_at: snapshotIso(raw.weekly.resets_at) },
+    session,
+    raw: isObj(raw.raw) ? raw.raw : null
+  } };
+}
+function matchSnapshotProvider(snapshot, providers){
+  const keys = [];
+  if (snapshot && snapshot.provider_hint) keys.push(snapshot.provider_hint);
+  for (const k of SNAPSHOT_HINTS) if (!keys.includes(k)) keys.push(k);
+  for (const k of keys){
+    const hit = (providers || []).find(p => String(p.name || '').toLowerCase().includes(k));
+    if (hit) return hit;
+  }
+  return null;
+}
+function snapshotNote(snapshot){
+  const src = (snapshot && snapshot.source) || 'snapshot';
+  if (snapshot && snapshot.session) return '5h session at ' + fmtRuns(snapshot.session.used_percent) + '% · via ' + src;
+  return 'via ' + src;
+}
+/* Writes exactly ONE log entry, with quick-set semantics: a 'set' entry
+   whose value is the weekly used_percent and whose timestamp is the
+   snapshot's captured_at. Throws (writing nothing) when no provider
+   matches or the match is not percent-measured. */
+function applySnapshot(dataIn, snapshot, newId, nowMs){
+  const provider = matchSnapshotProvider(snapshot, dataIn && dataIn.providers);
+  if (!provider) throw new Error('No provider matches this snapshot — add the provider first, then import again.');
+  if (provider.measure !== 'percent') throw new Error(provider.name + ' is measured in ' + unitName(provider) + ', but snapshots carry percents. Switch it to "Percent of weekly limit" or add a percent-measured provider.');
+  const data = normalizeData(JSON.parse(JSON.stringify(dataIn)));
+  const capMs = snapshot.captured_at ? Date.parse(snapshot.captured_at) : NaN;
+  const entry = normalizeLog({
+    id: strOr(newId) || 'l-snap', providerId: provider.id,
+    ts: Number.isFinite(capMs) ? capMs : (nowMs || Date.now()),
+    value: snapshot.weekly.used_percent, kind: 'set', note: snapshotNote(snapshot)
+  }, data.logs.length);
+  data.logs.push(entry);
+  return { data, entry, provider };
 }
 
 /* ---- usage state derived from logs ---- */
@@ -1026,6 +1266,79 @@ $('importFile').addEventListener('change', async ev => {
     toast('Import complete.');
   } catch (e) { msg.textContent = 'Import failed: ' + e.message; }
 });
+
+/* ---------------- Usage snapshots: preview + import ---------------- */
+let pendingSnapshot = null;
+function fmtSnapshotWhen(iso, tz){
+  if (!iso) return 'not given';
+  const ms = Date.parse(iso);
+  if (!Number.isFinite(ms)) return 'not given';
+  return fmtDay(ms, tz) + ', ' + fmtWhen(ms, tz);
+}
+function renderSnapshotPreview(){
+  const box = $('snapshotPreview'); box.textContent = '';
+  const btn = $('snapshotConfirmBtn'); btn.disabled = true;
+  if (!pendingSnapshot) return;
+  const snap = pendingSnapshot;
+  const provider = matchSnapshotProvider(snap, data.providers);
+  const tz = provider ? provider.tz : DEFAULT_TZ;
+  const rows = [
+    ['Source', snap.source + (snap.provider_hint ? ' · provider hint: ' + snap.provider_hint : '')],
+    ['Captured', fmtSnapshotWhen(snap.captured_at, tz)],
+    ['Weekly used', fmtRuns(snap.weekly.used_percent) + '%'],
+    ['Weekly resets', fmtSnapshotWhen(snap.weekly.resets_at, tz)]
+  ];
+  if (snap.session) rows.push(['Session (5h) used', fmtRuns(snap.session.used_percent) + '% · resets ' + fmtSnapshotWhen(snap.session.resets_at, tz)]);
+  rows.push(['Provider match', provider ? provider.name : 'none found']);
+  box.append(h('div', { class: 'item' },
+    h('div', { class: 'head' }, h('h3', null, 'Snapshot preview')),
+    h('table', null, h('tbody', null, rows.map(r => h('tr', null, h('th', null, r[0]), h('td', null, r[1])))))));
+  const msg = $('snapshotMsg');
+  if (!provider){
+    msg.textContent = 'No provider matches this snapshot — add the provider under Providers first, then import the file again.';
+    return;
+  }
+  if (provider.measure !== 'percent'){
+    msg.textContent = provider.name + ' is measured in ' + unitName(provider) + ' — snapshots carry percents, so this one cannot go into it. Switch it to "Percent of weekly limit" or add a percent-measured provider.';
+    return;
+  }
+  msg.textContent = 'Ready: Import writes one log entry — ' + provider.name + ' set to ' + fmtRuns(snap.weekly.used_percent) + '% at the captured time.';
+  btn.disabled = false;
+}
+$('snapshotFile').addEventListener('change', async ev => {
+  const file = ev.target.files[0]; ev.target.value = '';
+  if (!file) return;
+  pendingSnapshot = null; renderSnapshotPreview();
+  let parsed;
+  try { parsed = parseSnapshot(await file.text()); }
+  catch (e) { parsed = { ok: false, error: e.message }; }
+  if (!parsed.ok){ $('snapshotMsg').textContent = 'Snapshot not imported: ' + parsed.error; return; }
+  pendingSnapshot = parsed.snapshot;
+  renderSnapshotPreview();
+});
+$('snapshotConfirmBtn').addEventListener('click', () => {
+  if (!pendingSnapshot) return;
+  try {
+    const res = applySnapshot(data, pendingSnapshot, uid('l'), Date.now());
+    data = res.data;
+    save(); renderAll();
+    $('snapshotMsg').textContent = 'Imported: ' + res.provider.name + ' set to ' + fmtRuns(res.entry.value) + '% — logged at ' + fmtSnapshotWhen(new Date(res.entry.ts).toISOString(), res.provider.tz) + (res.entry.note ? ' (' + res.entry.note + ')' : '') + '.';
+    toast('Snapshot imported — ' + res.provider.name + ' at ' + fmtRuns(res.entry.value) + '%.');
+    pendingSnapshot = null;
+    $('snapshotPreview').textContent = '';
+    $('snapshotConfirmBtn').disabled = true;
+  } catch (e) { $('snapshotMsg').textContent = 'Snapshot not imported: ' + e.message; }
+});
+$('copySnapshotCodeBtn').addEventListener('click', async () => {
+  const src = $('claudeSnapshotSrc').textContent.trim();
+  if (src && await copyText(src)) toast('Bookmarklet code copied — paste it into the DevTools console on a claude.ai tab.');
+  else toast('Copy was blocked by the browser.');
+});
+$('bookmarkletLink').addEventListener('click', ev => {
+  ev.preventDefault();
+  toast('Drag that link to your bookmarks bar — clicking it here does nothing. It only works on claude.ai.');
+});
+
 function clearEverything(sampleOnly){
   if (!confirm(sampleOnly ? 'Clear the sample data and start with a blank desk?' : 'Clear ALL Usage Desk data from this browser? Export first if you want a backup.')) return;
   data = normalizeData({ version: DATA_VERSION, providers: [], logs: [], bots: [], prompts: [] });
