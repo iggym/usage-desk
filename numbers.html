@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>The real numbers — Usage Desk</title>
+    <meta
+      name="description"
+      content="The users, costs and growth of AI agents, with dated sources, careful metric definitions and interactive what-if models."
+    />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/desk.css" />
+  </head>
+  <body class="insight-page numbers-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <aside class="sidebar" aria-label="Usage Desk navigation">
+      <a class="desk-brand" href="index.html" title="Usage Desk home"
+        ><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>usage<span
+          style="color: var(--muted)"
+          >desk</span
+        ></a
+      >
+      <p class="nav-label">Workspace</p>
+      <nav class="side-nav" aria-label="Main pages">
+        <a href="index.html"><span data-icon="grid"></span>My desk</a
+        ><a href="agents.html"><span data-icon="orbit"></span>Agent atlas</a
+        ><a href="numbers.html" aria-current="page"
+          ><span data-icon="chart"></span>The real numbers</a
+        >
+      </nav>
+      <p class="nav-label">Your toolkit</p>
+      <nav class="side-nav secondary" aria-label="Desk tools">
+        <a href="index.html#budget"><span data-icon="wallet"></span>Budget &amp; optimize</a>
+        <a href="index.html#bots"><span data-icon="bot"></span>Bots &amp; routines</a>
+        <a href="index.html#prompts"><span data-icon="prompt"></span>Prompt library</a>
+        <a href="index.html#data"><span data-icon="download"></span>Data &amp; backups</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="local-card">
+          <span data-icon="shield"></span><strong>A private little desk.</strong>
+          <p>No accounts. No trackers.<br />Your usage stays in this browser.</p>
+        </div>
+        <div class="side-profile">
+          <span class="avatar" aria-hidden="true">I</span>
+          <div>
+            <p>Personal workspace</p>
+            <small>Local storage · v3.0</small>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <div class="page-shell">
+      <header class="page-topline">
+        <div class="breadcrumb">
+          <span data-icon="grid"></span><span>Workspace</span><span class="slash">/</span
+          ><strong>The real numbers</strong>
+        </div>
+        <div class="top-tools">
+          <span class="top-date">OCT 21, 2026 · RESEARCH EDITION</span
+          ><button type="button" id="motionToggle" class="motion-toggle" aria-pressed="false">
+            Motion: on</button
+          ><span class="local-pill">Local-first</span>
+        </div>
+      </header>
+      <main id="main">
+        <header class="insight-hero numbers-hero reveal">
+          <div class="insight-copy">
+            <p class="eyebrow">Less hype. More denominator. <span aria-hidden="true">↗</span></p>
+            <h1>The real<br /><em>numbers.</em></h1>
+            <p>
+              The scale is extraordinary. The definitions matter even more. Follow the people, the
+              spend and the curve—without mistaking a scenario for a fact.
+            </p>
+            <div class="hero-actions">
+              <a class="btn primary" href="#scale"
+                >Follow the data <span data-icon="arrow"></span></a
+              ><a class="btn ghost" href="#growth"
+                >Model a future <span data-icon="chart"></span
+              ></a>
+            </div>
+          </div>
+          <div class="insight-visual">
+            <img
+              src="assets/compute-world.webp"
+              width="1600"
+              height="900"
+              alt="AI-generated photorealistic data center with an orange light path, a visualization of the infrastructure behind AI growth"
+            /><span class="visual-caption">AI-generated infrastructure concept</span>
+          </div>
+        </header>
+        <div class="research-strip">
+          <span><span data-icon="clock"></span>REVIEWED OCT 21, 2026</span
+          ><span><span data-icon="book"></span>DATES + DEFINITIONS + SOURCES</span
+          ><span><span data-icon="shield"></span>NO LIVE MARKET FEED</span>
+        </div>
+        <noscript
+          ><p class="method-note">
+            Enable JavaScript for the local charts and calculators. No data is sent to a server. See
+            the <a href="docs/research.md">research notes</a> for sources and methods.
+          </p></noscript
+        >
+        <div
+          class="number-kpis"
+          id="numberKpis"
+          aria-label="Four differently defined market signals"
+        ></div>
+        <p class="method-note">
+          <strong>These numbers are not a leaderboard.</strong> Weekly reach ≠ monthly users ≠
+          survey adoption ≠ revenue run-rate. People use multiple products. These audiences overlap,
+          the reporting dates differ, and general assistant users are
+          <strong>not all agent users</strong>. Never add them into a “total agent population.”
+        </p>
+        <section class="editorial-section reveal" id="scale" aria-labelledby="scale-heading">
+          <p class="eyebrow">01 / The adoption curve</p>
+          <div class="section-heading">
+            <div>
+              <h2 id="scale-heading">The curve is real. So are the caveats.</h2>
+              <p class="sec-note">
+                One population at a time. Switch the series; inspect each reported snapshot.
+              </p>
+            </div>
+            <span class="badge orange">Reported historical observations</span>
+          </div>
+          <div class="chart-panel">
+            <div class="chart-toolbar">
+              <h3 id="historyTitle">ChatGPT · weekly reach</h3>
+              <div>
+                <label for="historySeries" class="sr-only">Choose historical audience series</label
+                ><select id="historySeries">
+                  <option value="chatgpt">ChatGPT · weekly reach</option>
+                  <option value="gemini">Gemini app · monthly users</option>
+                  <option value="codex">Codex · weekly users</option>
+                </select>
+              </div>
+            </div>
+            <div id="historyChart"></div>
+            <p id="historyInfo" class="chart-info" role="status"></p>
+            <p class="chart-caption" id="historyCaption"></p>
+            <details>
+              <summary class="small muted">Read the accessible data table</summary>
+              <div id="historyTable" class="table-scroll"></div>
+            </details>
+          </div>
+        </section>
+        <section class="editorial-section reveal" aria-labelledby="adoption-heading">
+          <p class="eyebrow">02 / Inside the developer toolkit</p>
+          <div class="section-heading">
+            <div>
+              <h2 id="adoption-heading">Not one winner. A changing toolkit.</h2>
+              <p class="sec-note">
+                Workplace tool usage in JetBrains’ May–July 2026 survey of &gt;15,000 professional
+                developers. Multi-select: these percentages do not sum to a market share.
+              </p>
+            </div>
+            <a
+              class="source-link"
+              href="https://blog.jetbrains.com/research/2026/08/ai-coding-agent-adoption-2026/"
+              target="_blank"
+              rel="noopener"
+              >Read the methodology [5] ↗</a
+            >
+          </div>
+          <div class="two-col">
+            <div class="chart-panel" style="margin: 0">
+              <h3>Used at work · % of surveyed professionals</h3>
+              <div class="adoption-bars" id="adoptionBars"></div>
+              <p class="chart-caption" style="margin-top: 22px">
+                Bars use a 0–100% scale. The sample was regionally quota-sampled and statistically
+                reweighted. JetBrains also sells developer tools. Selected products, not an
+                exhaustive tool census. Survey adoption does not measure code quality or
+                productivity.
+              </p>
+            </div>
+            <div class="panel">
+              <p class="eyebrow">Read the denominator</p>
+              <div class="calculator-result" style="color: var(--accent); font-size: 48px">
+                90% <small>at least weekly</small>
+              </div>
+              <p>
+                of professional developers in this survey used AI coding agents at work;
+                <strong style="color: var(--text)">68% reported daily use</strong>. That is a survey
+                result about a particular professional population—not 90% of humanity.
+                <a
+                  class="source-link"
+                  href="https://blog.jetbrains.com/research/2026/08/ai-coding-agent-adoption-2026/"
+                  target="_blank"
+                  rel="noopener"
+                  >[5]</a
+                >
+              </p>
+              <div class="recommendation" style="border-color: var(--accent); background: #29241e">
+                High adoption and uneven trust can coexist. A tool being used is not the same as a
+                task being completed correctly, cheaply or without supervision.
+              </div>
+              <a
+                class="subtle-link"
+                style="display: inline-block; margin-top: 18px; color: var(--accent)"
+                href="agents.html#landscape"
+                >See what the products actually do <span data-icon="arrow"></span
+              ></a>
+            </div>
+          </div>
+        </section>
+        <section class="editorial-section reveal" id="growth" aria-labelledby="growth-heading">
+          <p class="eyebrow">03 / The growth laboratory</p>
+          <div class="section-heading">
+            <div>
+              <h2 id="growth-heading">Small assumptions. Very different futures.</h2>
+              <p class="sec-note">
+                An editable mathematical scenario anchored to a dated disclosure. Not a prediction,
+                market forecast or current-user estimate.
+              </p>
+            </div>
+            <span class="badge green">User-controlled what-if</span>
+          </div>
+          <div class="chart-panel">
+            <div class="scenario-layout">
+              <form
+                id="scenarioForm"
+                class="scenario-controls"
+                style="
+                  background: none;
+                  border: 0;
+                  border-right: 1px solid var(--border);
+                  border-radius: 0;
+                  padding-top: 0;
+                  padding-left: 0;
+                  padding-bottom: 0;
+                  margin: 0;
+                "
+              >
+                <label for="scenarioSeries">Start from a reported floor</label
+                ><select id="scenarioSeries">
+                  <option value="codex">Codex · 5M · Jun 2, 2026</option>
+                  <option value="chatgpt">ChatGPT · 1.2B · Oct 5, 2026</option>
+                  <option value="gemini">Gemini · 1B · Aug 11, 2026</option></select
+                ><label for="growthRate"
+                  >Monthly growth <output id="growthRateValue" for="growthRate">5%</output></label
+                ><input id="growthRate" type="range" min="0" max="15" step="0.5" value="5" /><label
+                  for="growthMonths"
+                  >Scenario horizon
+                  <output id="growthMonthsValue" for="growthMonths">24 months</output></label
+                ><input id="growthMonths" type="range" min="6" max="36" step="6" value="24" /><label
+                  for="growthMode"
+                  >Growth model</label
+                ><select id="growthMode">
+                  <option value="compound">Constant compound growth</option>
+                  <option value="saturating">Saturating / logistic curve</option>
+                </select>
+                <div id="capacityWrap" hidden>
+                  <label for="scenarioCapacity">Hypothetical ceiling (millions)</label
+                  ><input
+                    id="scenarioCapacity"
+                    type="number"
+                    min="1"
+                    max="100000"
+                    step="1"
+                    value="100"
+                  />
+                  <p class="tiny muted" style="margin-top: 8px">
+                    An assumed ceiling, not a population forecast. Must be at least as large as the
+                    selected baseline.
+                  </p>
+                </div>
+                <div class="scenario-formula" id="scenarioFormula"></div>
+              </form>
+              <div>
+                <div class="scenario-result" id="scenarioResult" aria-live="polite"></div>
+                <div id="scenarioChart"></div>
+                <div class="chart-legend">
+                  <span>Source baseline</span><span class="projected">Hypothetical path</span>
+                </div>
+                <p class="chart-caption" id="scenarioCaveat"></p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section
+          class="editorial-section reveal"
+          id="economics"
+          aria-labelledby="economics-heading"
+        >
+          <p class="eyebrow">04 / What intelligence actually costs</p>
+          <div class="section-heading">
+            <div>
+              <h2 id="economics-heading">A $20 plan is not a $20 workflow.</h2>
+              <p class="sec-note">
+                US monthly list-price snapshots, reviewed October 21, 2026. Not offers, usage
+                guarantees or live quotes. Taxes, promotions, API and overages excluded.
+              </p>
+            </div>
+          </div>
+          <div class="two-col">
+            <div>
+              <div class="prices">
+                <div class="price-card">
+                  <div class="product-top">
+                    <span class="brand-logo claude" aria-hidden="true"
+                      ><img src="assets/logos/claude.svg" width="19" height="19" alt=""
+                    /></span>
+                    <div>
+                      <h3>Claude Pro</h3>
+                      <small>US · billed monthly</small>
+                    </div>
+                  </div>
+                  <strong>$20<small> / month</small></strong>
+                  <p>
+                    Annual billing differs. API usage is separate.
+                    <a
+                      class="source-link"
+                      href="https://claude.com/pricing"
+                      target="_blank"
+                      rel="noopener"
+                      >[9]</a
+                    >
+                  </p>
+                </div>
+                <div class="price-card">
+                  <div class="product-top">
+                    <span class="brand-logo gemini" aria-hidden="true"
+                      ><img src="assets/logos/googlegemini.svg" width="19" height="19" alt=""
+                    /></span>
+                    <div>
+                      <h3>Google AI Pro</h3>
+                      <small>US · billed monthly</small>
+                    </div>
+                  </div>
+                  <strong>$19.99<small> / month</small></strong>
+                  <p>
+                    A bundle, not a fixed token allowance.
+                    <a
+                      class="source-link"
+                      href="https://one.google.com/intl/en/about/google-ai-plans/"
+                      target="_blank"
+                      rel="noopener"
+                      >[10]</a
+                    >
+                  </p>
+                </div>
+              </div>
+              <div class="panel">
+                <h3>The number that matters: accepted outcomes.</h3>
+                <p style="margin-top: 12px">
+                  A single task may invoke a planner, tools, retries, output generation and human
+                  review. Metering rules differ across subscriptions, APIs and delegated products.
+                  Don’t convert a quota percentage into dollars.
+                </p>
+                <p>
+                  For Dot, ordinary conversations, deeper work and delegated Codex / ChatGPT Work
+                  tasks have distinct usage treatment. A “personal agent” can still fan out into
+                  several separate cost centers.
+                  <a
+                    class="source-link"
+                    href="https://openai.com/index/introducing-dots/"
+                    target="_blank"
+                    rel="noopener"
+                    >[1]</a
+                  >
+                </p>
+                <a class="btn" href="index.html#budget"
+                  >Budget your actual stack <span data-icon="arrow"></span
+                ></a>
+              </div>
+            </div>
+            <div class="panel cost-lab">
+              <span class="badge orange">Hypothetical inputs · not model quotes</span>
+              <h3 style="margin-top: 15px">The cost-per-outcome simulator</h3>
+              <p style="margin-top: 8px">
+                Change the token rates, loop length and acceptance rate. Success is the fraction of
+                full workflow attempts accepted after review.
+              </p>
+              <form id="outcomeForm">
+                <div class="grid">
+                  <div>
+                    <label for="simInputTokens">Input tokens / step</label
+                    ><input
+                      id="simInputTokens"
+                      type="number"
+                      min="0"
+                      max="100000000"
+                      step="1"
+                      value="2000"
+                    />
+                  </div>
+                  <div>
+                    <label for="simOutputTokens">Output tokens / step</label
+                    ><input
+                      id="simOutputTokens"
+                      type="number"
+                      min="0"
+                      max="100000000"
+                      step="1"
+                      value="800"
+                    />
+                  </div>
+                  <div>
+                    <label for="simInputRate">Input $ / million tokens</label
+                    ><input
+                      id="simInputRate"
+                      type="number"
+                      min="0"
+                      max="10000"
+                      step="0.01"
+                      value="3"
+                    />
+                  </div>
+                  <div>
+                    <label for="simOutputRate">Output $ / million tokens</label
+                    ><input
+                      id="simOutputRate"
+                      type="number"
+                      min="0"
+                      max="10000"
+                      step="0.01"
+                      value="15"
+                    />
+                  </div>
+                  <div>
+                    <label for="simSteps">Model steps / attempt</label
+                    ><input id="simSteps" type="number" min="1" max="1000" step="1" value="6" />
+                  </div>
+                  <div>
+                    <label for="simRetryPct">Extra step retries (%)</label
+                    ><input id="simRetryPct" type="number" min="0" max="1000" step="1" value="20" />
+                  </div>
+                  <div>
+                    <label for="simSuccessPct">Workflow acceptance (%)</label
+                    ><input
+                      id="simSuccessPct"
+                      type="number"
+                      min="1"
+                      max="100"
+                      step="1"
+                      value="80"
+                    />
+                  </div>
+                  <div>
+                    <label for="simToolCost">Tool fees $ / step</label
+                    ><input
+                      id="simToolCost"
+                      type="number"
+                      min="0"
+                      max="10000"
+                      step="0.001"
+                      value="0.01"
+                    />
+                  </div>
+                  <div>
+                    <label for="simReviewMinutes">Review minutes / attempt</label
+                    ><input
+                      id="simReviewMinutes"
+                      type="number"
+                      min="0"
+                      max="10000"
+                      step="0.1"
+                      value="2"
+                    />
+                  </div>
+                  <div>
+                    <label for="simHourlyRate">Human time $ / hour</label
+                    ><input
+                      id="simHourlyRate"
+                      type="number"
+                      min="0"
+                      max="100000"
+                      step="1"
+                      value="30"
+                    />
+                  </div>
+                </div>
+              </form>
+              <div class="unit-cost-result" id="outcomeResult" aria-live="polite"></div>
+              <p id="outcomeBreakdown"></p>
+              <p class="tiny muted">
+                ((token cost + tool fees) × steps × (1 + retry rate) + review cost) ÷ acceptance
+                rate. Assumes independent, equally priced attempts and review on every attempt.
+                Fixed subscription/hosting fees and downstream failure costs are not included. All
+                rates are editable examples.
+              </p>
+            </div>
+          </div>
+        </section>
+        <section class="editorial-section reveal" aria-labelledby="reality-heading">
+          <p class="eyebrow">05 / A healthier relationship with the headlines</p>
+          <div class="section-heading">
+            <div>
+              <h2 id="reality-heading">Three numbers we won’t invent.</h2>
+              <p class="sec-note">Absence of disclosure is a finding. Unknown is not zero.</p>
+            </div>
+          </div>
+          <div class="reality-cards">
+            <article class="reality-card">
+              <span aria-hidden="true">🔎</span>
+              <h3>A total “agent user” count</h3>
+              <p>
+                No consistent, deduplicated global figure is established by this source set. ChatGPT
+                and Gemini reach cannot be added together or relabeled as autonomous-agent adoption.
+              </p>
+            </article>
+            <article class="reality-card">
+              <span aria-hidden="true">🧾</span>
+              <h3>A universal agent market size</h3>
+              <p>
+                Model revenue, agent-product run-rate, funding and SaaS seats have different scopes.
+                Claude Code’s reported run-rate is a product signal—not the size of the whole
+                market.
+                <a
+                  class="source-link"
+                  href="https://www.anthropic.com/news/anthropic-raises-30-billion-series-g-funding-380-billion-post-money-valuation"
+                  target="_blank"
+                  rel="noopener"
+                  >[4]</a
+                >
+              </p>
+            </article>
+            <article class="reality-card">
+              <span aria-hidden="true">🫥</span>
+              <h3>Standalone Muse or Dots users</h3>
+              <p>
+                The reviewed launch sources don’t disclose separate active-user counts. We won’t
+                borrow the parent platform’s reach, infer paid seats or manufacture a growth curve.
+                <a
+                  class="source-link"
+                  href="https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/"
+                  target="_blank"
+                  rel="noopener"
+                  >[2]</a
+                ><a
+                  class="source-link"
+                  href="https://openai.com/index/introducing-dots/"
+                  target="_blank"
+                  rel="noopener"
+                  >[1]</a
+                >
+              </p>
+            </article>
+          </div>
+        </section>
+        <section class="editorial-section reveal" id="data-notebook" aria-labelledby="data-heading">
+          <p class="eyebrow">06 / The inspectable dataset</p>
+          <div class="section-heading">
+            <div>
+              <h2 id="data-heading">Every number gets a definition.</h2>
+              <p class="sec-note">
+                A source, a date, a unit and a limitation. Download the curated dataset—not anyone’s
+                private usage.
+              </p>
+            </div>
+            <button type="button" id="exportResearchBtn">
+              <span data-icon="download"></span> Download research CSV
+            </button>
+          </div>
+          <div class="chart-toolbar">
+            <label for="metricFilter">Show evidence type</label
+            ><select id="metricFilter">
+              <option value="all">All evidence</option>
+              <option value="Company report">Company reports</option>
+              <option value="Survey">Survey results</option>
+              <option value="List price">List prices</option>
+              <option value="Evidence gap">Evidence gaps</option>
+            </select>
+          </div>
+          <div id="metricsTable" class="table-scroll"></div>
+        </section>
+        <section class="source-ledger" aria-label="Research sources">
+          <details id="sourceDetails">
+            <summary>
+              Open the source notebook <span class="badge">Methods before marketing</span>
+            </summary>
+            <p class="sec-note">
+              Reviewed through October 21, 2026. Reported values are attributed company statements
+              or survey findings, not audited estimates by Usage Desk. “More than” values are lower
+              bounds. Charts plot those reported floors; no missing months are fabricated. Scenarios
+              and illustrative costs are labeled separately and are not part of the reported
+              dataset.
+            </p>
+            <ol id="sourceList" class="source-list"></ol>
+          </details>
+        </section>
+        <div class="explore-grid">
+          <a class="explore-card" href="agents.html"
+            ><img
+              src="assets/agent-world.webp"
+              width="1600"
+              height="900"
+              alt="AI-generated glass sphere symbolizing the agent landscape"
+              loading="lazy" />
+            <p class="eyebrow" style="color: var(--violet)">Meet the products</p>
+            <h3>Go beyond the denominator.</h3>
+            <p>The agent landscape, and the ideas reshaping it.</p>
+            <span class="arrow" data-icon="arrow"></span></a
+          ><a class="explore-card" href="index.html#budget"
+            ><p class="eyebrow" style="color: var(--green)">Make it personal</p>
+            <h3>Your numbers matter, too.</h3>
+            <p>Plan costs. Protect headroom. Optimize with intention.</p>
+            <span class="arrow" data-icon="arrow"></span
+          ></a>
+        </div>
+      </main>
+      <footer class="desk-footer">
+        <span
+          >Built for intentional intelligence. <span style="color: var(--green)">✳</span> Usage
+          Desk</span
+        ><span
+          >Local assets · No telemetry · <a href="index.html#data">Back up your desk</a> ·
+          <a href="https://iggy-contact.iggy-mw.workers.dev?site=usage-desk" rel="noopener"
+            >Contact ↗</a
+          ></span
+        >
+      </footer>
+    </div>
+    <script src="assets/shared.js"></script>
+    <script src="assets/research.js"></script>
+    <script src="assets/insights.js"></script>
+  </body>
+</html>

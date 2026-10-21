@@ -1,0 +1,7 @@
+node_modules/
+.arena*
+test-results/
+playwright-report/
+assets/logos/
+package-lock.json
+LICENSE

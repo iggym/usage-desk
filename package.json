@@ -1,0 +1,23 @@
+{
+  "name": "usage-desk",
+  "version": "3.0.0",
+  "private": true,
+  "description": "An offline-first AI usage, budget and agent intelligence desk",
+  "scripts": {
+    "test": "node --test tests/*.test.cjs",
+    "test:browser": "node --test tests/browser/*.test.cjs",
+    "check": "node scripts/check.cjs",
+    "dev": "python3 -m http.server 3000 --bind 0.0.0.0",
+    "sync:bookmarklet": "prettier --write claude-snapshot.js && node scripts/sync-bookmarklet.cjs && prettier --write index.html",
+    "format": "prettier --write index.html agents.html numbers.html \"assets/*.{js,css}\" claude-snapshot.js \"scripts/*.cjs\" \"tests/**/*.cjs\" \"docs/*.md\" README.md package.json .prettierrc.json",
+    "format:check": "prettier --check index.html agents.html numbers.html \"assets/*.{js,css}\" claude-snapshot.js \"scripts/*.cjs\" \"tests/**/*.cjs\" \"docs/*.md\" README.md package.json .prettierrc.json"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@sparticuz/chromium": "^153.0.0",
+    "axe-core": "^4.14.0",
+    "jsdom": "^26.1.0",
+    "prettier": "3.9.10",
+    "simple-icons": "^16.35.0"
+  }
+}
