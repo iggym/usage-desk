@@ -1057,6 +1057,53 @@
     if (personLore[p.name]) p.surprise = personLore[p.name];
   });
 
+  /* Symbolic still-life scenes stand in for faces: no likeness is invented. */
+  const personVisuals = {
+    'Sam Altman': [
+      'assets/builder-startup.jpg',
+      'AI-generated photorealistic loft desk with an early laptop, whiteboard charts and cables',
+    ],
+    'Dario Amodei': [
+      'assets/builder-biophysics.jpg',
+      'AI-generated photorealistic biophysics bench with pipettes, vials and protein sketches',
+    ],
+    'Daniela Amodei': [
+      'assets/builder-operations.jpg',
+      'AI-generated photorealistic operations desk with index cards, a pen and a book of essays',
+    ],
+    'Demis Hassabis': [
+      'assets/builder-chess.jpg',
+      'AI-generated photorealistic chessboard beside a sketch of a theme-park ride',
+    ],
+    'Sundar Pichai': [
+      'assets/builder-browser.jpg',
+      'AI-generated photorealistic materials bench with an alloy sample beside an abstract browser',
+    ],
+    'Mark Zuckerberg': [
+      'assets/builder-dorm.jpg',
+      'AI-generated photorealistic dorm desk with a psychology textbook and language flashcards',
+    ],
+    'Boris Cherny': [
+      'assets/builder-terminal.jpg',
+      'AI-generated photorealistic macro of a terminal window glowing on a dark desk',
+    ],
+    'Harrison Chase': [
+      'assets/builder-sideproject.jpg',
+      'AI-generated photorealistic kitchen counter at night turned into a side-project workstation',
+    ],
+    'David Soria Parra & Justin Spahr-Summers': [
+      'assets/builder-protocol.jpg',
+      'AI-generated photorealistic machined hub with different cables curving toward nodes of light',
+    ],
+  };
+  people.forEach((p) => {
+    const visual = personVisuals[p.name];
+    if (visual && !p.image) {
+      p.image = visual[0];
+      p.alt = visual[1];
+    }
+  });
+
   const futureVisuals = [
     {
       image: 'assets/future-selves.jpg',

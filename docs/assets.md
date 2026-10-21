@@ -8,6 +8,15 @@ All runtime imagery is served from the repository. No CDN, external font, analyt
 | `assets/focus.webp`              | Extracted unchanged from the existing homepage's inline WebP; retained prompt-library imagery.                                                                                               |
 | `assets/agent-world.webp`        | AI-generated photorealistic editorial concept: a glass sphere, orbital connections and miniature workspaces. Optimized to WebP. Not a product screenshot or documentary image.               |
 | `assets/compute-world.webp`      | AI-generated photorealistic editorial concept: a cinematic data-center corridor. Optimized to WebP. Not a photograph of a named facility and not a visualization of measured capacity.       |
+| `assets/builder-startup.jpg`     | AI-generated photorealistic loft desk for the startup/distribution builder card. A symbolic scene, not a portrait or a real office.                                                          |
+| `assets/builder-biophysics.jpg`  | AI-generated photorealistic biophysics bench for the science-background builder card. Not a portrait and not a real lab.                                                                     |
+| `assets/builder-operations.jpg`  | AI-generated photorealistic operations desk for the governance/operations builder card. Not a portrait.                                                                                      |
+| `assets/builder-chess.jpg`       | AI-generated photorealistic chessboard and ride sketch for the games-and-neuroscience builder card. Not a portrait.                                                                          |
+| `assets/builder-browser.jpg`     | AI-generated photorealistic materials bench with a soft-focus browser for the product-reach builder card. Not a portrait.                                                                    |
+| `assets/builder-dorm.jpg`        | AI-generated photorealistic dorm desk for the consumer-software builder card. Not a portrait.                                                                                                |
+| `assets/builder-terminal.jpg`    | AI-generated photorealistic terminal close-up for the developer-tooling builder card. Not a portrait.                                                                                        |
+| `assets/builder-sideproject.jpg` | AI-generated photorealistic kitchen-counter workstation for the side-project builder card. Not a portrait.                                                                                   |
+| `assets/builder-protocol.jpg`    | AI-generated photorealistic cable hub for the protocol builder card. Not a portrait and not a real device.                                                                                   |
 | `assets/future-selves.jpg`       | AI-generated photorealistic concept for the "future selves" thought experiment: a kitchen table with translucent alternate selves. Not a photograph; no real people are depicted.            |
 | `assets/future-neighborhood.jpg` | AI-generated photorealistic concept for the "neighborhood nervous system" experiment: aerial view of homes and batteries linked by light. Not a map of a real place.                         |
 | `assets/future-company.jpg`      | AI-generated photorealistic concept for the "eleven-minute company": an office dissolving into luminous dust. Not a real workplace.                                                          |
@@ -21,7 +30,7 @@ All runtime imagery is served from the repository. No CDN, external font, analyt
 | Inline UI icons                  | Locally authored SVG line icons; decorative icons are hidden from assistive technology and accompanied by text.                                                                              |
 | Dot orb                          | CSS-rendered illustrative motif, not an official logo. The product is identified in accompanying text.                                                                                       |
 
-The six `builder-*.jpg` images and three `future-*.jpg` images are AI-generated visualisations. Each is captioned in the interface as an AI concept and is never presented as a portrait, a product photograph or documentary evidence. People are represented by initials and generated still-life scenes, not by likenesses.
+The fifteen `builder-*.jpg` images and three `future-*.jpg` images are AI-generated visualisations. Each is captioned in the interface as an AI concept and is never presented as a portrait, a product photograph or documentary evidence. People are represented by generated still-life scenes chosen for their work, never by likenesses; the initials badge is only a fallback when a scene is missing.
 
 The existing repository's MIT [license](../LICENSE) is retained. No new provenance claim is made for the inherited images beyond their presence in the original repository.
 
