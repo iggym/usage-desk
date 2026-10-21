@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Agent atlas — Usage Desk</title>
+    <meta
+      name="description"
+      content="An evidence-led, interactive field guide to AI agents: products, people, capabilities, big ideas and clearly labeled speculative futures."
+    />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/desk.css" />
+  </head>
+  <body class="insight-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <aside class="sidebar" aria-label="Usage Desk navigation">
+      <a class="desk-brand" href="index.html" title="Usage Desk home"
+        ><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>usage<span
+          style="color: var(--muted)"
+          >desk</span
+        ></a
+      >
+      <p class="nav-label">Workspace</p>
+      <nav class="side-nav" aria-label="Main pages">
+        <a href="index.html"><span data-icon="grid"></span>My desk</a
+        ><a href="agents.html" aria-current="page"><span data-icon="orbit"></span>Agent atlas</a
+        ><a href="numbers.html"><span data-icon="chart"></span>The real numbers</a>
+      </nav>
+      <p class="nav-label">Your toolkit</p>
+      <nav class="side-nav secondary" aria-label="Desk tools">
+        <a href="index.html#budget"><span data-icon="wallet"></span>Budget &amp; optimize</a>
+        <a href="index.html#bots"><span data-icon="bot"></span>Bots &amp; routines</a>
+        <a href="index.html#prompts"><span data-icon="prompt"></span>Prompt library</a>
+        <a href="index.html#data"><span data-icon="download"></span>Data &amp; backups</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="local-card">
+          <span data-icon="shield"></span><strong>A private little desk.</strong>
+          <p>No accounts. No trackers.<br />Your usage stays in this browser.</p>
+        </div>
+        <div class="side-profile">
+          <span class="avatar" aria-hidden="true">I</span>
+          <div>
+            <p>Personal workspace</p>
+            <small>Local storage · v3.0</small>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <div class="page-shell">
+      <header class="page-topline">
+        <div class="breadcrumb">
+          <span data-icon="grid"></span><span>Workspace</span><span class="slash">/</span
+          ><strong>Agent atlas</strong>
+        </div>
+        <div class="top-tools">
+          <span class="top-date">OCT 21, 2026 · RESEARCH EDITION</span
+          ><button type="button" id="motionToggle" class="motion-toggle" aria-pressed="false">
+            Motion: on</button
+          ><span class="local-pill">Local-first</span>
+        </div>
+      </header>
+      <main id="main">
+        <header class="insight-hero reveal">
+          <div class="insight-copy">
+            <p class="eyebrow">Field notes from the agent era <span aria-hidden="true">✳</span></p>
+            <h1>Not just chat.<br />A new kind<br />of <em>agency.</em></h1>
+            <p>
+              From answering questions to taking responsibility. A living-space snapshot of the
+              products, people and possibilities changing what software can do.
+            </p>
+            <div class="hero-actions">
+              <a class="btn primary" href="#landscape"
+                >Explore the landscape <span data-icon="arrow"></span></a
+              ><a class="btn ghost" href="#futures"
+                >Think further <span data-icon="sparkle"></span
+              ></a>
+            </div>
+          </div>
+          <div class="insight-visual">
+            <img
+              src="assets/agent-world.webp"
+              width="1600"
+              height="900"
+              alt="AI-generated photorealistic glass sphere with a metallic orbit and luminous nodes, symbolizing an interconnected agent ecosystem"
+            /><span class="orbit-dot" aria-hidden="true"></span
+            ><span class="orbit-dot" aria-hidden="true"></span
+            ><span class="visual-caption">AI-generated concept · not a product photograph</span>
+          </div>
+        </header>
+        <div class="research-strip">
+          <span><span data-icon="clock"></span>REVIEWED OCT 21, 2026</span
+          ><span><span data-icon="layers"></span>18 PRODUCTS · 6 LANDSCAPES</span
+          ><span><span data-icon="book"></span>PRIMARY SOURCES + DEVELOPER SURVEY</span
+          ><span><span data-icon="shield"></span>FACT ≠ FORECAST</span>
+        </div>
+        <noscript
+          ><p class="method-note">
+            Enable JavaScript for the local directory, charts and simulations. No data is sent to a
+            server. The <a href="docs/research.md">research notes</a> list the sources and methods.
+          </p></noscript
+        >
+        <section class="editorial-section reveal" aria-labelledby="timeline-heading">
+          <p class="eyebrow">01 / The speed of the shift</p>
+          <div class="section-heading">
+            <div>
+              <h2 id="timeline-heading">From a prompt to a presence.</h2>
+              <p class="sec-note">
+                Scrub through the turning points. The last two stops are imagination, not a roadmap.
+              </p>
+            </div>
+            <span class="badge violet">An abbreviated history</span>
+          </div>
+          <div class="timeline-panel" id="timelinePanel" aria-live="polite"></div>
+          <div class="timeline-control">
+            <label for="timelineRange" class="sr-only"
+              >Explore the agent timeline, from 2022 to a speculative 2035</label
+            ><input id="timelineRange" type="range" min="0" max="5" step="1" value="3" />
+            <div class="timeline-ticks" aria-hidden="true">
+              <span>2022</span><span>2024</span><span>2025</span><span>2026</span><span>2028 ↗</span
+              ><span>2035 ✦</span>
+            </div>
+          </div>
+        </section>
+        <section
+          class="editorial-section reveal"
+          id="landscape"
+          aria-labelledby="landscape-heading"
+        >
+          <p class="eyebrow">02 / The product landscape</p>
+          <div class="section-heading">
+            <div>
+              <h2 id="landscape-heading">Different agents. Different superpowers.</h2>
+              <p class="sec-note">
+                Widely used tools, important newcomers and the infrastructure beneath them. A
+                curated map, not a market-share ranking.
+              </p>
+            </div>
+            <a href="numbers.html">See the evidence <span data-icon="upRight"></span></a>
+          </div>
+          <div class="directory-tools">
+            <div
+              class="filters"
+              id="productFilters"
+              role="group"
+              aria-label="Filter products by category"
+            >
+              <button type="button" data-category="all" aria-pressed="true">All agents</button
+              ><button type="button" data-category="personal" aria-pressed="false">Personal</button
+              ><button type="button" data-category="code" aria-pressed="false">Code</button
+              ><button type="button" data-category="research" aria-pressed="false">Research</button
+              ><button type="button" data-category="workflows" aria-pressed="false">
+                Workflows</button
+              ><button type="button" data-category="enterprise" aria-pressed="false">
+                Enterprise</button
+              ><button type="button" data-category="builders" aria-pressed="false">
+                Builder tools
+              </button>
+            </div>
+            <div class="search-wrap">
+              <span data-icon="search"></span
+              ><label for="productSearch" class="sr-only">Search agent products</label
+              ><input
+                id="productSearch"
+                type="search"
+                placeholder="Find an agent or capability…"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+          <p id="productCount" class="result-count" role="status"></p>
+          <div id="productGrid" class="product-grid"></div>
+          <p class="chart-caption">
+            Capabilities are manufacturer-described, not independently benchmarked here. Usage
+            signals retain their populations and dates in product details. Newcomers are not labeled
+            “widely adopted.” Dot here means <strong>OpenAI Dots</strong>; the older New Computer
+            companion is a different, discontinued product.
+            <a class="source-link" href="https://new.computer/" target="_blank" rel="noopener"
+              >[36]</a
+            >
+          </p>
+        </section>
+        <section class="editorial-section reveal" id="agent-lab" aria-labelledby="lab-heading">
+          <p class="eyebrow">03 / A little agency, in action</p>
+          <div class="section-heading">
+            <div>
+              <h2 id="lab-heading">What are you actually delegating?</h2>
+              <p class="sec-note">
+                An interactive mental model. No connected apps, no real actions, no tokens spent.
+              </p>
+            </div>
+            <span class="badge violet">Illustrative simulation</span>
+          </div>
+          <div
+            class="lab-visual"
+            id="labVisual"
+            aria-label="Five-stage illustrative agent workflow"
+          >
+            <div class="flow-node" data-step="0"><span data-icon="prompt"></span>Intent</div>
+            <span class="flow-connector" aria-hidden="true"></span>
+            <div class="flow-node" data-step="1"><span data-icon="layers"></span>Plan</div>
+            <span class="flow-connector" aria-hidden="true"></span>
+            <div class="flow-node" data-step="2"><span data-icon="globe"></span>Tools</div>
+            <span class="flow-connector" aria-hidden="true"></span>
+            <div class="flow-node" data-step="3"><span data-icon="shield"></span>Check</div>
+            <span class="flow-connector" aria-hidden="true"></span>
+            <div class="flow-node" data-step="4"><span data-icon="check"></span>Result</div>
+          </div>
+          <div class="lab-controls">
+            <form id="labForm">
+              <label for="labTask">Give the imaginary agent a job</label
+              ><select id="labTask">
+                <option value="research">Prepare a sourced weekly brief</option>
+                <option value="code">Fix a small software regression</option>
+                <option value="bill">Renegotiate a recurring bill</option>
+              </select>
+              <div class="range-line">
+                <label for="autonomyRange">Autonomy boundary</label
+                ><output id="autonomyValue" for="autonomyRange">Assist + ask</output>
+              </div>
+              <input id="autonomyRange" type="range" min="0" max="2" step="1" value="1" />
+              <div class="form-actions">
+                <button type="submit" id="runLabBtn" class="primary">
+                  <span data-icon="play"></span> Run the simulation</button
+                ><button type="button" id="approveLabBtn" hidden>Approve simulated action</button
+                ><button type="button" id="resetLabBtn">Reset</button>
+              </div>
+            </form>
+            <div>
+              <div class="lab-status" id="labStatus" role="status">
+                The same model can behave like a drafter, an assistant or a delegated worker. Change
+                the boundary and watch where human approval belongs.
+              </div>
+              <p style="margin-top: 12px">
+                More autonomy should not mean unlimited authority. Sensitive sends, purchases and
+                merges stop for approval in this demonstration.
+              </p>
+            </div>
+          </div>
+        </section>
+        <section
+          class="editorial-section reveal"
+          id="perspectives"
+          aria-labelledby="perspectives-heading"
+        >
+          <p class="eyebrow">04 / Change the lens</p>
+          <div class="section-heading">
+            <div>
+              <h2 id="perspectives-heading">The interesting part isn’t the chatbot.</h2>
+              <p class="sec-note">
+                Five editorial lenses. These are ways to think, not settled facts or vendor
+                promises.
+              </p>
+            </div>
+            <span class="badge">Editorial analysis</span>
+          </div>
+          <div
+            class="segment-control"
+            id="lensControls"
+            role="group"
+            aria-label="Choose a perspective"
+          ></div>
+          <div class="lens-panel" id="lensPanel" aria-live="polite"></div>
+        </section>
+        <section class="editorial-section reveal" id="futures" aria-labelledby="futures-heading">
+          <p class="eyebrow">05 / Beyond the imaginable</p>
+          <div class="section-heading">
+            <div>
+              <h2 id="futures-heading">Let’s get a little unreasonable.</h2>
+              <p class="sec-note">
+                Wild thought experiments—not predictions to bet on. Flip each idea to find the
+                uncomfortable question.
+              </p>
+            </div>
+            <span class="badge violet">Speculation · no implied timeline</span>
+          </div>
+          <div class="future-grid" id="futureGrid"></div>
+        </section>
+        <section class="editorial-section reveal" id="people" aria-labelledby="people-heading">
+          <p class="eyebrow">06 / The humans behind the agency</p>
+          <div class="section-heading">
+            <div>
+              <h2 id="people-heading">Watch the builders. Question the incentives.</h2>
+              <p class="sec-note">
+                A non-exhaustive reading list of people and organizations—not endorsements, and not
+                a claim that any one person built these systems.
+              </p>
+            </div>
+          </div>
+          <div id="organizationList" class="organization-list" aria-label="Key organizations"></div>
+          <div id="peopleGrid" class="people-grid"></div>
+        </section>
+        <section class="source-ledger" aria-label="Research sources">
+          <details id="sourceDetails">
+            <summary>
+              Open the source notebook <span class="badge">Dated, inspectable evidence</span>
+            </summary>
+            <p class="sec-note">
+              Researched through October 21, 2026. Product docs are living pages; dated
+              announcements describe that moment in time. Security and performance claims remain
+              vendor claims. No live refresh or tracking requests are made.
+            </p>
+            <ol id="sourceList" class="source-list"></ol>
+          </details>
+        </section>
+        <div class="explore-grid">
+          <a class="explore-card" href="numbers.html"
+            ><img
+              src="assets/compute-world.webp"
+              width="1600"
+              height="900"
+              alt="AI-generated cinematic data center"
+              loading="lazy" />
+            <p class="eyebrow">Next field note</p>
+            <h3>But what do the numbers say?</h3>
+            <p>Separate real scale from good storytelling.</p>
+            <span class="arrow" data-icon="arrow"></span></a
+          ><a class="explore-card" href="index.html#budget"
+            ><p class="eyebrow" style="color: var(--green)">Back to your own reality</p>
+            <h3>Put your agents on a budget.</h3>
+            <p>A better future starts with a bounded task.</p>
+            <span class="arrow" data-icon="arrow"></span
+          ></a>
+        </div>
+      </main>
+      <footer class="desk-footer">
+        <span
+          >Built for intentional intelligence. <span style="color: var(--green)">✳</span> Usage
+          Desk</span
+        ><span
+          >Local assets · No telemetry · <a href="index.html#data">Back up your desk</a> ·
+          <a href="https://iggy-contact.iggy-mw.workers.dev?site=usage-desk" rel="noopener"
+            >Contact ↗</a
+          ></span
+        >
+      </footer>
+    </div>
+    <dialog id="productDialog" aria-labelledby="dialogProductName">
+      <div class="dialog-top">
+        <div id="dialogProductHeading"></div>
+        <button id="closeProductDialog" type="button" aria-label="Close product details">×</button>
+      </div>
+      <div class="dialog-body" id="dialogProductBody"></div>
+    </dialog>
+    <script src="assets/shared.js"></script>
+    <script src="assets/research.js"></script>
+    <script src="assets/insights.js"></script>
+  </body>
+</html>
