@@ -62,7 +62,7 @@ test('atlas extras stay sourced: product lore, builder notes and scenario imager
   assert.ok(builders.length >= R.people.length, 'Every listed builder has a lesser-known note');
   for (const p of R.people) assert.ok(p.surprise && p.surprise.length > 40, p.name);
   const visual = R.people.filter((p) => p.image);
-  assert.equal(visual.length, 6);
+  assert.equal(visual.length, R.people.length);
   for (const p of visual) {
     assert.match(p.image, /^assets\/[a-z-]+\.jpg$/);
     assert.match(p.alt, /AI-generated photorealistic/i);

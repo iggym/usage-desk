@@ -432,10 +432,9 @@
           (person.image ? '' : ' abstract') +
           '">' +
           art +
-          '<span class="person-avatar" aria-hidden="true">' +
-          E(person.initials) +
-          '</span>' +
-          (person.image ? '<span class="visual-caption">AI concept · not a portrait</span>' : '') +
+          (person.image
+            ? '<span class="visual-caption">AI concept · not a portrait</span>'
+            : '<span class="person-avatar" aria-hidden="true">' + E(person.initials) + '</span>') +
           '</div><div class="person-meta"><h3>' +
           E(person.name) +
           '</h3><p class="person-role">' +
@@ -447,9 +446,7 @@
           E(person.name) +
           '">' +
           UI.icon('sparkle') +
-          'Less known</button><span>' +
-          (person.image ? 'Concept art' : 'Reading pointer') +
-          '</span></div></div></div>' +
+          'Less known</button></div></div></div>' +
           '<div class="flip-face flip-back" aria-hidden="true" inert data-mark="' +
           E(person.initials) +
           '"><span class="badge violet">Lesser-known detail</span><p class="lore">' +
