@@ -9,6 +9,21 @@
       content="Track Grok Bot, Muse, Claude Pro, Gemini Pro and Dot. Budget AI spend, optimize routines and explore the agent landscape. Private and browser-only."
     />
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#0c0e10" />
+    <script>
+      // Resolve the theme before paint so a stored choice never flashes.
+      (function () {
+        try {
+          var saved = localStorage.getItem('usagedesk:theme');
+          var light = saved
+            ? saved === 'light'
+            : window.matchMedia('(prefers-color-scheme: light)').matches;
+          document.documentElement.dataset.theme = light ? 'light' : 'dark';
+        } catch (error) {
+          document.documentElement.dataset.theme = 'dark';
+        }
+      })();
+    </script>
     <link rel="stylesheet" href="assets/desk.css" />
   </head>
   <body class="desk-page">
@@ -56,6 +71,8 @@
         </div>
         <div class="top-tools">
           <span class="top-date">OCT 21, 2026 · RESEARCH EDITION</span
+          ><button type="button" id="themeToggle" class="theme-toggle" aria-pressed="false">
+            Theme</button
           ><button type="button" id="motionToggle" class="motion-toggle" aria-pressed="false">
             Motion: on</button
           ><span class="local-pill">Local-first</span>

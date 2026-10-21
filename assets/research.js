@@ -324,7 +324,61 @@
       'https://blog.google/technology/ai/io-2025-keynote/',
       'Historical disclosure: Gemini app >400M monthly active users. Not paid Pro seats.',
     ],
-  ].map(([id, publisher, title, date, url, note]) => ({
+    [
+      41,
+      'Anthropic',
+      'Company and leadership',
+      null,
+      'https://www.anthropic.com/company',
+      'Co-founder and Chief Science Officer roles. Living page; titles change. Professional history is drawn from public interviews and papers, not an audited résumé.',
+      'Living documentation',
+    ],
+    [
+      42,
+      'Chris Olah',
+      'Research notes and Distill',
+      null,
+      'https://colah.github.io/',
+      'Personal interpretability writing and the Distill journal archive. A public notebook, not a peer-reviewed record of every contribution.',
+      'Personal research writing',
+    ],
+    [
+      43,
+      'Noam Brown',
+      'Research overview',
+      null,
+      'https://noambrown.github.io/',
+      'Poker-AI research (Libratus, Pluribus) and later work on inference-time search for language models. Author’s own summary.',
+      'Personal research writing',
+    ],
+    [
+      44,
+      'Lil’Log',
+      'LLM Powered Autonomous Agents',
+      '2023-06-23',
+      'https://lilianweng.github.io/posts/2023-06-23-agent/',
+      'A widely cited practitioner survey of agent architecture. An explanatory blog post, not a product benchmark.',
+      'Technical essay',
+    ],
+    [
+      45,
+      'Simon Willison',
+      'Prompt injection and the LLM CLI',
+      null,
+      'https://simonwillison.net/',
+      'Independent practitioner archive: the 2022 “prompt injection” write-up, Datasette, and continuous model notes. Opinionated, dated and inspectable.',
+      'Personal research writing',
+    ],
+    [
+      46,
+      'Soumith Chintala',
+      'About and PyTorch origins',
+      null,
+      'https://soumith.ch/',
+      'Personal site plus the PyTorch history thread. PyTorch groundwork began in 2016 among Torch7 contributors; the project is a collaboration, not one person’s codebase.',
+      'Personal research writing',
+    ],
+  ].map(([id, publisher, title, date, url, note, type]) => ({
     id,
     publisher,
     title,
@@ -332,7 +386,7 @@
     url,
     note,
     reviewed,
-    type: id === 5 ? 'Survey' : 'Primary source',
+    type: type || (id === 5 ? 'Survey' : 'Primary source'),
   }));
 
   const products = [
@@ -872,7 +926,158 @@
       lens: 'Open interfaces between models, tools and context.',
       source: 23,
     },
+    {
+      name: 'Jared Kaplan',
+      initials: 'JK',
+      role: 'Co-founder & Chief Science Officer · Anthropic',
+      lens: 'Scaling laws — and the argument that capability arrives on predictable curves.',
+      source: 41,
+      image: 'assets/builder-scaling.jpg',
+      alt: 'AI-generated photorealistic brass balance scale weighing graphite blocks against a glowing cube',
+      surprise:
+        'A theoretical physicist by training, not a computer scientist. He co-authored the scaled-up scaling-laws work at OpenAI before co-founding Anthropic — which means his bet is less “smarter models” than “capability improves on measurable curves you can plan around.”',
+    },
+    {
+      name: 'Chris Olah',
+      initials: 'CO',
+      role: 'Co-founder · Anthropic',
+      lens: 'Interpretability: reading a network instead of only testing its outputs.',
+      source: 42,
+      image: 'assets/builder-circuits.jpg',
+      alt: 'AI-generated photorealistic glass and copper circuit sculpture with light tracing its pathways',
+      surprise:
+        'No PhD. He published neural-network interpretability work on his own blog, helped start the Distill journal, and made “circuits” a research programme — a self-taught route into a frontier lab at a time when almost every route ran through a doctorate.',
+    },
+    {
+      name: 'Noam Brown',
+      initials: 'NB',
+      role: 'Research · OpenAI',
+      lens: 'Search, game theory and letting a model think longer instead of growing bigger.',
+      source: 43,
+      image: 'assets/builder-strategy.jpg',
+      alt: 'AI-generated photorealistic poker table with clay chips and a floating lattice of probability lines',
+      surprise:
+        'His poker bots Libratus and Pluribus beat elite humans, Pluribus in six-player no-limit — a format where bluffing and hidden information defeat pure calculation. The lesson he carried into language models: extra thinking time at inference can buy more than a larger network.',
+    },
+    {
+      name: 'Lilian Weng',
+      initials: 'LW',
+      role: 'Research · OpenAI',
+      lens: 'Agent architecture, written down in public.',
+      source: 44,
+      image: 'assets/builder-agents.jpg',
+      alt: 'AI-generated photorealistic notebook of hand-drawn agent diagrams beside a glowing holographic flowchart',
+      surprise:
+        'A Lil’Log post, “LLM Powered Autonomous Agents”, became an unofficial syllabus for agent builders — planning, memory and tool use mapped before most vendors had a product. She later co-founded Thinking Machines Lab, then returned to OpenAI in 2026 to lead a research team.',
+    },
+    {
+      name: 'Simon Willison',
+      initials: 'SW',
+      role: 'Co-creator of Django · independent',
+      lens: 'The sceptical practitioner: tools, evaluations and injection.',
+      source: 45,
+      image: 'assets/builder-tooling.jpg',
+      alt: 'AI-generated photorealistic night desk with a monitor’s cyan glow, notebook and hand-built device',
+      surprise:
+        'He coined the term “prompt injection” in 2022 — years before most agent products shipped — and keeps publishing dated, runnable notes on every new model. Django, Datasette and the LLM CLI all come from the same habit: build the small tool, then write down what broke.',
+    },
+    {
+      name: 'Soumith Chintala',
+      initials: 'SC',
+      role: 'CTO · Thinking Machines Lab',
+      lens: 'The substrate: the framework most of this industry still trains and serves on.',
+      source: 46,
+      image: 'assets/builder-tensors.jpg',
+      alt: 'AI-generated photorealistic hands shaping a glowing translucent tensor lattice above a metal workbench',
+      surprise:
+        'PyTorch did not start inside a lab. Its groundwork began in 2016 among a band of Torch7 maintainers working online, and it nearly died from internal resistance. He left Meta and the project in November 2025 after eleven years — while PyTorch was already running most AI research.',
+    },
   ];
+
+  /* Editorial additions kept beside the ledger so records stay auditable:
+     these are dated, hedged field notes — not benchmarks or predictions. */
+  const productLore = {
+    dot: 'The name is a rerun. New Computer’s earlier companion was also called Dot and shut down in October 2025. OpenAI Dots is a different product, and it meters conversations, deeper work and delegated Codex jobs on separate buckets — so one limit rarely describes the others.',
+    muse: 'Muse does not run in your browser tab. Meta places it in a dedicated Secure VM with a separate Sentinel layer reviewing outbound activity. The AI-glasses integration shown at Connect 2026 was announced as coming in following months — an announcement, not general availability.',
+    gemini:
+      'The Gemini app’s audience roughly doubled twice in sixteen months: 400M monthly users at I/O 2025, 900M in May 2026, then 1B in August 2026. None of those numbers is a Google AI Pro subscriber count, and the free tier is inside all of them.',
+    grok: 'Bots on one account share a computer, and Cursor’s own documentation says separate Bots are not security boundaries. The X Subscription also meters Grok Bot, Cursor and the Grok apps from a single shared weekly pool — the limit is not per product.',
+    cowork:
+      'Cowork is not Claude Code with a new name. Anthropic keeps the product subscription, API billing and the Claude Code interface as separate surfaces with separate limits, so “I have Pro” never means “I have unlimited agent time.”',
+    work: 'ChatGPT Work inherits a Codex-style usage structure rather than a chat-style one. The expensive unit is often the long-running project, not the message — and an artifact can keep updating after you close the tab.',
+    'claude-code':
+      'Generally available in May 2025; by February 2026 Anthropic reported a >$2.5B annualized run-rate for it. That is a run-rate, not audited annual revenue — and JetBrains’ 39% is workplace usage among surveyed professional developers, not market share.',
+    copilot:
+      'The interesting artifact is not autocomplete. The Copilot desktop app pulls agents, repository workflows, reviews and cloud automations into one control surface — and MCP is what lets those agents reach tools beyond the repository.',
+    cursor:
+      'Cursor runs agents both locally and in the cloud, which means two different blast radii for the same prompt. Its 12% is a multi-select survey response from professional developers — not 12% of all programmers, and not a productivity measurement.',
+    codex:
+      'In June 2026 OpenAI said knowledge workers were roughly 20% of Codex users: most usage still looked like software work even as the product moved into research and artifacts. It reported >5M weekly users at that point.',
+    antigravity:
+      'Alphabet’s >2.4M weekly-active figure came from an earnings update, not a launch event. It counts weekly users of an agent-first IDE — a different question from the survey percentages printed beside it.',
+    comet:
+      'A browser agent inherits every logged-in session in that browser. Comet can show its actions and pause for permission, but web pages can carry instructions too — which is why prompt injection, not model quality, is the security story here.',
+    replit:
+      'Replit Agent provisions infrastructure as well as code, so “it runs” can hide cost, secrets and permissions. Plan mode exists because rejecting a plan is far cheaper than rejecting a build.',
+    agentforce:
+      'Agentforce’s real boundary is the CRM’s permission model, not the model card. Guardrails and custom actions decide what an agent may touch; a vendor deployment story is not an ROI guarantee for your organisation.',
+    'copilot-studio':
+      'Copilot Studio publishes agents into Teams, sites and apps — and the consumption meter follows them there. Deterministic steps and approvals are a licensing decision as much as a safety one.',
+    n8n: 'n8n is source-available, not permissively licensed open source. Its most economical trick is unglamorous: deterministic branches that skip the model call entirely, so intelligence is spent only where judgment is needed.',
+    langgraph:
+      'Durable execution and replay may matter more than model choice. LangGraph is a runtime you host, so you also inherit application security, model spend and evaluation.',
+    crewai:
+      'Crews are roles; Flows are state. The documented failure mode is arithmetic — every extra agent multiplies tokens, coordination overhead and the number of ways the run can fail.',
+  };
+  products.forEach((p) => {
+    if (productLore[p.id]) p.surprise = productLore[p.id];
+  });
+
+  const personLore = {
+    'Sam Altman':
+      'Dropped out of Stanford at 19 to build Loopt, a location-sharing app, and ran Y Combinator before OpenAI. The distribution instincts came from consumer software, not research.',
+    'Dario Amodei':
+      'His PhD is in biophysics, and he co-authored “Concrete Problems in AI Safety” in 2016 — a paper about mundane accidents, not runaway intelligence. Baidu and Google Brain came before OpenAI.',
+    'Daniela Amodei':
+      'Studied English literature, then ran people operations at Stripe. Anthropic’s unusual structure — a public benefit corporation underneath a long-term benefit trust — owes as much to that operations background as to research.',
+    'Demis Hassabis':
+      'A child chess prodigy who, as a teenager, designed levels for Bullfrog’s Theme Park. He later took a PhD in cognitive neuroscience and shared the 2024 Nobel Prize in Chemistry for AlphaFold.',
+    'Sundar Pichai':
+      'Joined Google in 2004 and is usually remembered for Chrome and the toolbar; he studied metallurgical engineering at IIT Kharagpur before an MBA at Wharton.',
+    'Mark Zuckerberg':
+      'Built a music player and Facemash before Facebook, studied psychology alongside computer science, and later learned Mandarin well enough to take questions in it.',
+    'Boris Cherny':
+      'Wrote “Programming TypeScript” before building Claude Code. The interface he ended up betting on was the terminal — the least fashionable surface available at the time.',
+    'Harrison Chase':
+      'LangChain began as a side project while he was an engineer at an ML startup. The framework was public for months before there was a company behind it.',
+    'David Soria Parra & Justin Spahr-Summers':
+      'Justin Spahr-Summers created ReactiveCocoa before MCP; David Soria Parra is a longtime PHP contributor. The protocol’s authors came from client apps and language tooling, not from a model lab’s API team.',
+  };
+  people.forEach((p) => {
+    if (personLore[p.name]) p.surprise = personLore[p.name];
+  });
+
+  const futureVisuals = [
+    {
+      image: 'assets/future-selves.jpg',
+      alt: 'AI-generated photorealistic kitchen table where a person faces four translucent alternate versions of themselves',
+    },
+    {
+      image: 'assets/future-neighborhood.jpg',
+      alt: 'AI-generated photorealistic aerial view of homes and batteries linked by threads of amber light',
+    },
+    {
+      image: 'assets/future-company.jpg',
+      alt: 'AI-generated photorealistic small office dissolving into luminous dust at golden hour',
+    },
+  ];
+  futures.forEach((future, index) => {
+    const visual = futureVisuals[index];
+    if (visual) {
+      future.image = visual.image;
+      future.alt = visual.alt;
+    }
+  });
 
   const series = {
     chatgpt: {
