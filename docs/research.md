@@ -42,6 +42,8 @@ Growth, horizon and ceiling are user assumptions. The logistic rate parameter r 
 - Claude Code's **annualized run-rate** is not realized annual revenue, profit, valuation or the size of the entire agent market.
 - The delegation lab is a **local illustration**, not an agent evaluation or integration. It never sends, purchases, merges, changes accounts or accesses tools. Even its most delegated mode requires explicit approval before a simulated sensitive action.
 - Photorealistic hero images are **AI-generated concepts**, not documentary evidence. Brand identifiers are local, editorial and non-endorsing.
+- **Flip-side field notes.** Each product card hides a short, sourced "lesser-known" note on its back; `research.js` stores them as `productLore` and merges them onto the product record at load. Each builder card carries a `surprise` note (`personLore`) plus, for six entries, an AI-generated concept still life. These are hedged editorial readings of the cited sources (for example, Cursor's shared X Subscription pool, or PyTorch's Torch7 lineage), not new measurements. Professional-history details are drawn from public interviews, papers and project archives; titles are living claims and can change after the review date.
+- **Stance sliders** in the futures section record only the reader's own reaction in the page session. Nothing is stored, transmitted or scored, and the replies are editorial prompts rather than probabilities.
 
 ## Maintaining the notebook
 

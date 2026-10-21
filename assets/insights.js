@@ -75,6 +75,43 @@
       enterprise: 'Enterprise',
       builders: 'Builder tools',
     };
+    const marks = {
+      personal: '🫧',
+      code: '⌘',
+      research: '🔭',
+      workflows: '⚙️',
+      enterprise: '🏛️',
+      builders: '🧱',
+    };
+    /* Faces swap in place; the hidden one leaves the tab order and the a11y tree. */
+    function syncFaces(card) {
+      const flipped = card.classList.contains('is-flipped');
+      [
+        [card.querySelector('.flip-front'), !flipped],
+        [card.querySelector('.flip-back'), flipped],
+      ].forEach(([face, visible]) => {
+        if (!face) return;
+        face.toggleAttribute('inert', !visible);
+        face.setAttribute('aria-hidden', String(!visible));
+      });
+    }
+    function wireFlips(grid) {
+      grid.addEventListener('click', (event) => {
+        const trigger = event.target.closest('[data-flip]');
+        if (!trigger || !grid.contains(trigger)) return;
+        const card = trigger.closest('.product-card, .person-card');
+        if (!card) return;
+        const face = trigger.closest('.flip-face');
+        card.classList.toggle('is-flipped');
+        syncFaces(card);
+        const next = card.querySelector(
+          card.classList.contains('is-flipped') ? '.flip-back' : '.flip-front'
+        );
+        const target = next && next.querySelector('button, a[href]');
+        if (target && face && !face.contains(target)) target.focus();
+      });
+    }
+    wireFlips($('productGrid'));
     function renderProducts() {
       const products = R.filterProducts(category, $('productSearch').value);
       $('productCount').textContent =
@@ -86,26 +123,50 @@
         ? products
             .map(
               (p) =>
-                '<article class="product-card reveal"><div class="product-top">' +
+                '<article class="product-card reveal"><div class="flip-inner">' +
+                '<div class="flip-face flip-front">' +
+                '<div class="product-top">' +
                 UI.logo(p.name) +
                 '<div><h3>' +
                 E(p.name) +
                 '</h3><small>' +
                 E(p.org) +
-                '</small></div></div><p>' +
+                '</small></div></div><p class="product-summary">' +
                 E(p.summary) +
                 citation(p.source) +
                 '</p><div class="product-tags">' +
                 p.tags.map((tag) => '<span class="tag">' + E(tag) + '</span>').join('') +
                 '</div><div class="product-bottom"><span>' +
                 E(labels[p.category]) +
-                '</span><button type="button" data-product="' +
+                '</span><span class="product-actions">' +
+                '<button type="button" class="flip-btn" data-flip aria-label="The odd detail: lesser-known note for ' +
+                E(p.name) +
+                '">' +
+                UI.icon('sparkle') +
+                'The odd detail</button><button type="button" data-product="' +
                 p.id +
                 '" aria-label="Read the field note for ' +
                 E(p.name) +
                 '">Field note ' +
                 UI.icon('upRight') +
-                '</button></div></article>'
+                '</button></span></div></div>' +
+                '<div class="flip-face flip-back" aria-hidden="true" inert><span class="back-watermark" aria-hidden="true">' +
+                UI.logo(p.name) +
+                '</span><h4>' +
+                UI.icon('sparkle') +
+                'Less well known</h4><p class="lore">' +
+                E(
+                  p.surprise ||
+                    p.caution ||
+                    'The useful detail is in the primary source, not the launch post.'
+                ) +
+                '</p><p class="lore-source">Sourced field note · <a href="' +
+                E(source(p.source).url) +
+                '" target="_blank" rel="noopener">' +
+                E(source(p.source).publisher) +
+                ' ↗</a></p><button type="button" class="flip-btn" data-flip aria-label="Return to the ' +
+                E(p.name) +
+                ' summary">Back to the brief ↺</button></div></div></article>'
             )
             .join('')
         : '<p class="empty" style="grid-column:1/-1">No agents match those filters. Try another category or a broader search.</p>';
@@ -236,24 +297,52 @@
       const button = event.target.closest('[data-lens]');
       if (button) selectLens(button.dataset.lens);
     });
+    const stanceWords = ['Not in my lifetime', 'Plausible, with limits', 'Closer than it sounds'];
+    const stanceReplies = [
+      'Fair. The hard part was never the demo; it was consent, reversibility and who can switch it off.',
+      'A workable stance: plausible, but only if permissions and exit routes are designed before the feature.',
+      'Then the question to keep asking is not “can it?” but “who owns the objective, and what does an error cost?”',
+    ];
     $('futureGrid').innerHTML = R.futures
       .map(
         (future, i) =>
-          '<article class="future-card"><span class="badge violet">Thought experiment</span><span class="future-icon" aria-hidden="true">' +
+          '<article class="future-card"><div class="future-scene"><img src="' +
+          E(future.image || 'assets/agent-world.webp') +
+          '" width="1536" height="1024" loading="lazy" alt="' +
+          E(future.alt || 'AI-generated concept image') +
+          '"><span class="badge violet">Thought experiment</span><span class="future-icon" aria-hidden="true">' +
           future.emoji +
-          '</span><p class="eyebrow" style="font-size:8px">' +
+          '</span></div><div class="future-body"><p class="eyebrow">' +
           E(future.tag) +
           '</p><h3>' +
           E(future.title) +
-          '</h3><p id="future-text-' +
+          '</h3><p class="future-text" id="future-text-' +
           i +
           '">' +
           E(future.possibility) +
-          '</p><button type="button" data-future="' +
+          '</p><div class="stance"><div class="stance-head"><label for="stance-' +
+          i +
+          '">How plausible does this feel?</label><output id="stance-out-' +
+          i +
+          '" for="stance-' +
+          i +
+          '">' +
+          stanceWords[1] +
+          '</output></div><input id="stance-' +
+          i +
+          '" type="range" min="0" max="2" step="1" value="1" data-stance="' +
+          i +
+          '" aria-describedby="stance-reply-' +
+          i +
+          '"><p class="stance-reaction" id="stance-reply-' +
+          i +
+          '" role="status">' +
+          stanceReplies[1] +
+          '</p></div><button type="button" data-future="' +
           i +
           '" aria-pressed="false" aria-controls="future-text-' +
           i +
-          '">Flip the perspective ↻</button></article>'
+          '">Flip the perspective ↻</button></div></article>'
       )
       .join('');
     $('futureGrid').addEventListener('click', (event) => {
@@ -268,6 +357,40 @@
         : R.futures[i].possibility;
       button.textContent = flipped ? 'Return to the possibility ↻' : 'Flip the perspective ↻';
     });
+    $('futureGrid').addEventListener('input', (event) => {
+      const slider = event.target.closest('[data-stance]');
+      if (!slider) return;
+      const i = Number(slider.dataset.stance),
+        value = Math.min(2, Math.max(0, Number(slider.value)));
+      $('stance-out-' + i).textContent = stanceWords[value];
+      $('stance-reply-' + i).textContent = stanceReplies[value];
+      const card = slider.closest('.future-card');
+      card.classList.remove('reaction-pop');
+      // Reflow restarts the one-shot animation without a timer.
+      void card.offsetWidth;
+      card.classList.add('reaction-pop');
+    });
+    /* A small constellation of the brands and ideas being speculated about. */
+    if ($('futureOrbits')) {
+      const orbitBrands = ['OpenAI', 'Anthropic', 'Google', 'Meta', 'Cursor', 'n8n'];
+      const orbitEmoji = ['🪞', '🌐', '🫧', '✳️', '🧠', '🛰️'];
+      $('futureOrbits').innerHTML =
+        '<span class="orbit-note">Speculation is not a roadmap</span><span class="orbit-line"></span>' +
+        orbitBrands
+          .map(
+            (name, i) =>
+              '<span class="orbit-logo" style="animation-delay:' +
+              i * 0.4 +
+              's">' +
+              UI.logo(name) +
+              '</span><span class="orbit-emoji" style="animation-delay:' +
+              (i * 0.5 + 0.2) +
+              's" aria-hidden="true">' +
+              orbitEmoji[i] +
+              '</span>'
+          )
+          .join('');
+    }
     const orgs = [
       ['OpenAI', 'Models + personal agents'],
       ['Anthropic', 'Models + knowledge work'],
@@ -295,21 +418,56 @@
       )
       .join('');
     $('peopleGrid').innerHTML = R.people
-      .map(
-        (person) =>
-          '<article class="person-card"><span class="person-avatar" aria-hidden="true">' +
+      .map((person) => {
+        const art = person.image
+          ? '<img src="' +
+            E(person.image) +
+            '" width="1536" height="1024" loading="lazy" alt="' +
+            E(person.alt || 'AI-generated concept image') +
+            '">'
+          : '';
+        return (
+          '<article class="person-card reveal"><div class="flip-inner">' +
+          '<div class="flip-face flip-front"><div class="person-photo' +
+          (person.image ? '' : ' abstract') +
+          '">' +
+          art +
+          '<span class="person-avatar" aria-hidden="true">' +
           E(person.initials) +
-          '</span><h3>' +
+          '</span>' +
+          (person.image ? '<span class="visual-caption">AI concept · not a portrait</span>' : '') +
+          '</div><div class="person-meta"><h3>' +
           E(person.name) +
-          '</h3><p>' +
+          '</h3><p class="person-role">' +
           E(person.role) +
           citation(person.source) +
-          '</p><p>' +
+          '</p><p class="person-lens">' +
           E(person.lens) +
-          '</p></article>'
-      )
+          '</p><div class="flip-actions"><button type="button" class="flip-btn" data-flip aria-label="Less known: lesser-known note about ' +
+          E(person.name) +
+          '">' +
+          UI.icon('sparkle') +
+          'Less known</button><span>' +
+          (person.image ? 'Concept art' : 'Reading pointer') +
+          '</span></div></div></div>' +
+          '<div class="flip-face flip-back" aria-hidden="true" inert data-mark="' +
+          E(person.initials) +
+          '"><span class="badge violet">Lesser-known detail</span><p class="lore">' +
+          E(
+            person.surprise ||
+              person.lens + ' Listed here as a reading pointer, not an endorsement.'
+          ) +
+          '</p><p class="lore-source">Source · <a href="' +
+          E(source(person.source).url) +
+          '" target="_blank" rel="noopener">' +
+          E(source(person.source).publisher) +
+          ' ↗</a></p><button type="button" class="flip-btn" data-flip aria-label="Back: close the note about ' +
+          E(person.name) +
+          '">Back ↺</button></div></div></article>'
+        );
+      })
       .join('');
-
+    wireFlips($('peopleGrid'));
     /* A finite state simulation. Approval is always explicit, never timer-driven. */
     const autonomyNames = ['Draft only', 'Assist + ask', 'Delegate bounded work'];
     const jobs = {

@@ -16,8 +16,8 @@ const inputs = {
 };
 test('all research records resolve to dated/reviewed primary sources or an explicitly labeled survey', () => {
   assert.equal(R.reviewed, '2026-10-21');
-  assert.equal(R.sources.length, 40);
-  assert.equal(new Set(R.sources.map((s) => s.id)).size, 40);
+  assert.equal(R.sources.length, 46);
+  assert.equal(new Set(R.sources.map((s) => s.id)).size, 46);
   for (const s of R.sources) {
     assert.match(s.url, /^https:\/\//);
     assert.equal(s.reviewed, R.reviewed);
@@ -52,6 +52,25 @@ test('directory search is case-insensitive, category-bound and has an empty stat
   assert.ok(R.filterProducts('builders', 'durable').some((p) => p.id === 'langgraph'));
   assert.equal(R.filterProducts('enterprise', 'Gemini').length, 0);
   assert.equal(R.filterProducts('all', 'unfindable-tool-xyz').length, 0);
+});
+test('atlas extras stay sourced: product lore, builder notes and scenario imagery', () => {
+  for (const p of R.products) {
+    assert.ok(p.surprise && p.surprise.length > 60, p.id + ': lesser-known note');
+    assert.doesNotMatch(p.surprise, /^https?:/, p.id + ': link belongs in sources');
+  }
+  const builders = R.people.filter((p) => p.surprise);
+  assert.ok(builders.length >= R.people.length, 'Every listed builder has a lesser-known note');
+  for (const p of R.people) assert.ok(p.surprise && p.surprise.length > 40, p.name);
+  const visual = R.people.filter((p) => p.image);
+  assert.equal(visual.length, 6);
+  for (const p of visual) {
+    assert.match(p.image, /^assets\/[a-z-]+\.jpg$/);
+    assert.match(p.alt, /AI-generated photorealistic/i);
+  }
+  for (const f of R.futures) {
+    assert.match(f.image, /^assets\/[a-z-]+\.jpg$/);
+    assert.match(f.alt, /AI-generated photorealistic/i);
+  }
 });
 test('reported milestones and imaginative scenarios have distinct evidence labels', () => {
   assert.equal(R.timeline.filter((t) => t.type === 'reported').length, 4);

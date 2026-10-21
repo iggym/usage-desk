@@ -7,8 +7,10 @@ A private, browser-only workspace for **Grok Bot, Muse, Claude Pro, Gemini Pro a
 ## Three connected workspaces
 
 - **[My desk](index.html)** — five agent presets and custom providers; quota rings, quick logging, reset countdowns, burn-rate forecasts, routines, pause checklist, prompt library, weekly review, optional tab-open reminders and JSON backups.
-- **[Agent atlas](agents.html)** — 18 products across personal agents, coding, research, workflows, enterprise and builder tools. Search/filter the directory, open sourced field notes, scrub the historical/speculative timeline, run a permission-gated delegation simulation, explore five perspective shifts, and flip three wild thought experiments. Includes key organizations, people, local brand marks and photorealistic AI-generated editorial imagery.
+- **[Agent atlas](agents.html)** — 18 products across personal agents, coding, research, workflows, enterprise and builder tools. Search/filter the directory, open sourced field notes, and flip any product card to read a sourced, **lesser-known** detail on its back. Scrub the historical/speculative timeline, run a permission-gated delegation simulation, explore five perspective shifts, and turn three wild thought experiments into photorealistic scenes with an interactive plausibility slider. The builder section adds six less-obvious figures with their own flip-side notes and AI-generated concept art. Local brand marks only.
 - **[The real numbers](numbers.html)** — dated audience/growth observations, developer-survey adoption, list-price context, an inspectable source notebook and research CSV. Interactive historical charts keep populations separate; editable compound/logistic scenarios and a cost-per-accepted-outcome simulator are explicitly hypothetical.
+
+Every page has a **light/dark toggle** in the top bar. The choice is stored at `usagedesk:theme`; with no stored choice the site follows the operating system's `prefers-color-scheme`, and the theme is applied before first paint so there is no flash. Motion keeps its separate toggle.
 
 All charts, filters, calculations, simulations and exports run locally. There are no model API calls, connected accounts, tracking pixels or live market feeds. Source links open external sites **only when followed**.
 

@@ -371,3 +371,49 @@ test('primary navigation is keyboard reachable with a working skip link', () =>
     await page.keyboard.press('Enter');
     await expect(page).toHaveURL(/#main$/);
   }));
+test('theme toggle switches every page, persists the choice and follows the system by default', () =>
+  pageFor(async (page) => {
+    await go(page, 'agents');
+    const initial = await page.evaluate(() => document.documentElement.dataset.theme);
+    const toggled = initial === 'dark' ? 'light' : 'dark';
+    await page.locator('#themeToggle').click();
+    assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), toggled);
+    assert.equal(await page.evaluate(() => localStorage.getItem('usagedesk:theme')), toggled);
+    await expect(page.locator('#themeToggle')).toHaveAttribute(
+      'aria-label',
+      toggled === 'light' ? 'Switch to dark mode' : 'Switch to light mode'
+    );
+    for (const name of ['numbers', 'index', 'agents']) {
+      await go(page, name);
+      assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), toggled);
+    }
+    const surface = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+    assert.notEqual(surface, 'rgba(0, 0, 0, 0)');
+  }));
+test('product and builder cards flip to a sourced lesser-known note with keyboard support', () =>
+  pageFor(async (page) => {
+    await go(page, 'agents');
+    const card = page.locator('.product-card').first();
+    const flip = card.locator('.flip-front [data-flip]');
+    await flip.focus();
+    await page.keyboard.press('Enter');
+    await expect(card).toHaveClass(/is-flipped/);
+    await expect(card.locator('.flip-back')).not.toHaveAttribute('aria-hidden', 'true');
+    assert.equal(
+      await card.locator('.flip-back').evaluate((el) => el.contains(document.activeElement)),
+      true
+    );
+    await expect(card.locator('.flip-back .lore')).not.toBeEmpty();
+    await card.locator('.flip-back [data-flip]').click();
+    await expect(card).not.toHaveClass(/is-flipped/);
+    await expect(card.locator('.flip-back')).toHaveAttribute('aria-hidden', 'true');
+    const builder = page.locator('.person-card').last();
+    await expect(builder.locator('.person-photo img')).toHaveCount(1);
+    await builder.locator('.flip-front [data-flip]').click();
+    await expect(builder).toHaveClass(/is-flipped/);
+    await expect(builder.locator('.flip-back .lore')).toContainText('PyTorch');
+    await page.locator('#futureGrid [data-future="0"]').click();
+    await expect(page.locator('#future-text-0')).toContainText('cannot know');
+    await page.locator('#stance-0').fill('2');
+    await expect(page.locator('#stance-out-0')).toHaveText('Closer than it sounds');
+  }));

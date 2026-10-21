@@ -9,6 +9,21 @@
       content="An evidence-led, interactive field guide to AI agents: products, people, capabilities, big ideas and clearly labeled speculative futures."
     />
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#0c0e10" />
+    <script>
+      // Resolve the theme before paint so a stored choice never flashes.
+      (function () {
+        try {
+          var saved = localStorage.getItem('usagedesk:theme');
+          var light = saved
+            ? saved === 'light'
+            : window.matchMedia('(prefers-color-scheme: light)').matches;
+          document.documentElement.dataset.theme = light ? 'light' : 'dark';
+        } catch (error) {
+          document.documentElement.dataset.theme = 'dark';
+        }
+      })();
+    </script>
     <link rel="stylesheet" href="assets/desk.css" />
   </head>
   <body class="insight-page">
@@ -55,6 +70,8 @@
         </div>
         <div class="top-tools">
           <span class="top-date">OCT 21, 2026 · RESEARCH EDITION</span
+          ><button type="button" id="themeToggle" class="theme-toggle" aria-pressed="false">
+            Theme</button
           ><button type="button" id="motionToggle" class="motion-toggle" aria-pressed="false">
             Motion: on</button
           ><span class="local-pill">Local-first</span>
@@ -274,7 +291,13 @@
             </div>
             <span class="badge violet">Speculation · no implied timeline</span>
           </div>
+          <div class="future-orbits" id="futureOrbits" role="presentation"></div>
           <div class="future-grid" id="futureGrid"></div>
+          <p class="chart-caption">
+            Scenario images are AI-generated photorealistic visualisations, not photographs of real
+            places or products. The stance slider records only your own reaction in this browser
+            session; nothing is transmitted or scored.
+          </p>
         </section>
         <section class="editorial-section reveal" id="people" aria-labelledby="people-heading">
           <p class="eyebrow">06 / The humans behind the agency</p>

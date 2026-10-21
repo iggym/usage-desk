@@ -122,6 +122,54 @@
       syncMotion();
     });
   syncMotion();
+  /* Theme: a stored choice wins; otherwise follow the operating system. */
+  const themeKey = 'usagedesk:theme';
+  const systemLight =
+    window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+  function storedTheme() {
+    try {
+      const value = localStorage.getItem(themeKey);
+      return value === 'light' || value === 'dark' ? value : null;
+    } catch (_) {
+      return null;
+    }
+  }
+  let theme = storedTheme() || (systemLight ? 'light' : 'dark');
+  function applyTheme(next) {
+    theme = next;
+    document.documentElement.dataset.theme = theme;
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', theme === 'light' ? '#f7f5f0' : '#0c0e10');
+    const toggle = document.getElementById('themeToggle');
+    if (!toggle) return;
+    const toLight = theme === 'dark';
+    toggle.setAttribute('aria-pressed', String(theme === 'light'));
+    toggle.setAttribute('aria-label', toLight ? 'Switch to light mode' : 'Switch to dark mode');
+    toggle.setAttribute('title', toLight ? 'Switch to light mode' : 'Switch to dark mode');
+    toggle.innerHTML =
+      '<span class="theme-glyph" data-icons="theme"></span>' +
+      '<span class="theme-text">' +
+      (toLight ? 'Light' : 'Dark') +
+      '</span>';
+    const glyph = toggle.querySelector('[data-icons]');
+    if (glyph)
+      glyph.innerHTML =
+        theme === 'light'
+          ? '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>'
+          : '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>';
+  }
+  applyTheme(theme);
+  const themeToggle = document.getElementById('themeToggle');
+  if (themeToggle)
+    themeToggle.addEventListener('click', () => {
+      const next = theme === 'light' ? 'dark' : 'light';
+      applyTheme(next);
+      try {
+        localStorage.setItem(themeKey, next);
+      } catch (_) {
+        /* optional preference */
+      }
+    });
   const motionOff = () => reduced || paused;
   let observer;
   if (!motionOff() && 'IntersectionObserver' in window) {
